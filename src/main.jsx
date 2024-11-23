@@ -1,8 +1,7 @@
-import React, { StrictMode } from "react";
+import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.jsx";
-// import "./assets/style/index.scss";
-import StoreContextProvider from "./context/StoreContext.jsx";
+import App from "./App";
+import StoreContextProvider from "./context/StoreContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <StrictMode>
