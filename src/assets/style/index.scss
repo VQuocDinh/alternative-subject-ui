@@ -1,7 +1,7 @@
 @import "./var.scss";
 
 :root {
-  --background-color: #fff;
+  --background-color: #F9FAFB;
   --primary-text-color: #000;
   --secondary-text-color: #0069fd;
   --gray-color: #f7fafc;
@@ -39,6 +39,7 @@
     width: 400px;
     height: 100%;
   }
+
   .content {
     box-shadow: 0 0 70px #ebebeb;
     // height: 100%;
@@ -47,6 +48,7 @@
 
 .user {
   height: 100vh;
+
   .content {
     margin-top: 100px;
   }
