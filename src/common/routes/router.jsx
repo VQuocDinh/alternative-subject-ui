@@ -22,6 +22,7 @@ const DashboardLayout = lazy(() => import('../layout/DashboardLayout'));
 
 // Treatment
 const TreatmentCommonContainer = lazy(() => import('../../treatment/index'));
+const VitalSignContainer = lazy(() => import('../../treatment/vital-sign'));
 
 const routes = [
   {
@@ -62,6 +63,10 @@ const routes = [
           {
             path: PATH_DASHBOARD.treatment.common,
             element: <TreatmentCommonContainer />,
+          },
+          {
+            path: PATH_DASHBOARD.treatment.vitalSign,
+            element: <VitalSignContainer />,
           },
         ],
       },
