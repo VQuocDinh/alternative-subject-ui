@@ -1,87 +1,142 @@
 import { useState } from 'react';
-import { Table, Pagination, Dropdown, ButtonGroup, Button } from 'react-bootstrap';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  TablePagination,
+  IconButton,
+  Tooltip,
+  Box,
+  FormControlLabel,
+  Switch,
+} from '@mui/material';
+import { HEAD_TABLE_PROPS, PATIENT_LIST_MOCK_DATA } from '../constant';
+import Iconify from '../../../common/components/Iconify';
+import TableHeadCustom from '../../../common/components/mui-table/TableHeadCustom';
+import PatientTableRow from './PatientTableRow';
+import TableSkeleton from '../../../common/components/mui-table/TableSkeleton';
+import TableNoData from '../../../common/components/mui-table/TableNoData';
 
-const PatientTable = ({ patients, statuses }) => {
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const patientsPerPage = 5;
+const PatientTable = () => {
+  const [data, setData] = useState(PATIENT_LIST_MOCK_DATA);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [dense, setDense] = useState(false);
 
-  // Handle pagination logic
-  const totalPages = Math.ceil(patients.length / patientsPerPage);
-  const startIndex = (currentPage - 1) * patientsPerPage;
-  const currentPatients = patients.slice(startIndex, startIndex + patientsPerPage);
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
+  // Handle row selection
+  const handleSelectRow = (id) => {
+    setSelectedIds((prevSelectedIds) =>
+      prevSelectedIds.includes(id)
+        ? prevSelectedIds.filter((item) => item !== id)
+        : [...prevSelectedIds, id]
+    );
   };
 
-  const renderStatusLabel = (statusCode) => {
-    const status = statuses.find((s) => s.status === statusCode);
-    return status ? status.label : 'Không xác định';
+  // Handle page change
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
   };
 
-  const handleAction = (patientId, newStatus) => {
-    console.log(`Chuyển bệnh nhân ${patientId} sang trạng thái: ${newStatus}`);
-    // Gắn logic API ở đây
+  // Handle rows per page change
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  // Handle dense toggle
+  const handleChangeDense = (event) => {
+    setDense(event.target.checked);
+  };
+
+  // Handle delete selected rows
+  const handleDeleteRows = (selectedIds) => {
+    const newData = data.filter((row) => !selectedIds.includes(row.id));
+    setData(newData);
+    setSelectedIds([]);
   };
 
   return (
-    <div className="mt-4">
-      <Table striped bordered hover responsive>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Mã bệnh nhân</th>
-            <th>Họ và tên</th>
-            <th>Tuổi</th>
-            <th>Thời gian check-in</th>
-            <th>Trạng thái</th>
-            <th>Hành động</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentPatients.map((patient, index) => (
-            <tr key={patient.id}>
-              <td>{startIndex + index + 1}</td>
-              <td>{patient.id}</td>
-              <td>{patient.name}</td>
-              <td>{patient.age}</td>
-              <td>{patient.checkInTime}</td>
-              <td>{renderStatusLabel(patient.status)}</td>
-              <td>
-                <Dropdown as={ButtonGroup}>
-                  <Button variant="info">Thay đổi</Button>
-                  <Dropdown.Toggle split variant="info" />
-                  <Dropdown.Menu>
-                    {statuses.map((status) => (
-                      <Dropdown.Item
-                        key={status.status}
-                        onClick={() => handleAction(patient.id, status.status)}
-                      >
-                        {status.label}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                </Dropdown>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-
-      {/* Pagination */}
-      <Pagination className="justify-content-end">
-        {Array.from({ length: totalPages }).map((_, index) => (
-          <Pagination.Item
-            key={index + 1}
-            active={index + 1 === currentPage}
-            onClick={() => handlePageChange(index + 1)}
+    <>
+      <TableContainer sx={{ position: 'relative' }}>
+        {!!selectedIds.length && (
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              padding: 1,
+              backgroundColor: '#fff',
+              zIndex: 1,
+            }}
           >
-            {index + 1}
-          </Pagination.Item>
-        ))}
-      </Pagination>
-    </div>
+            <Tooltip title="Xóa">
+              <IconButton color="primary" onClick={() => handleDeleteRows(selectedIds)}>
+                <Iconify icon={'eva:trash-2-outline'} />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        )}
+        <Table size={dense ? 'small' : 'medium'}>
+          <TableHeadCustom headLabel={HEAD_TABLE_PROPS} rowCount={data?.length} />
+
+          <TableBody>
+            {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+              <PatientTableRow row={row} onDeleteRow={() => {}} onSelectRow={() => {}} />
+              // <TableRow key={row.id}>
+              //   <TableCell align="left">{row.patientId}</TableCell>
+              //   <TableCell align="left">{row.name}</TableCell>
+              //   <TableCell align="left">{row.age}</TableCell>
+              //   <TableCell align="left">{row.checkInTime}</TableCell>
+              //   <TableCell align="left">{row.status}</TableCell>
+              //   <TableCell align="left">
+              //     <TableMoreMenu>
+              //     <Tooltip title="Chuyển trạng thái">
+              //       <IconButton
+              //         color="primary"
+              //         onClick={() => {
+              //           // Handle transition of status logic
+              //           console.log(`Chuyển trạng thái cho bệnh nhân ${row.patientId}`);
+              //         }}
+              //       >
+              //         <Iconify icon="eva:arrow-ios-forward-fill" />
+              //       </IconButton>
+              //     </Tooltip>
+              //     </TableMoreMenu>
+              //   </TableCell>
+              // </TableRow>
+            ))}
+            {/* Pagination */}
+            {/* <TableSkeleton isLoading={isLoadingData} row={rowsPerPage} /> */}
+            {data.length === 0 && <TableNoData isNotFound={true} />}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Box sx={{ position: 'relative', mt: '20px' }}>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 15]}
+          component="div"
+          count={data.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+        <FormControlLabel
+          control={<Switch checked={dense} onChange={handleChangeDense} />}
+          label="Thu gọn"
+          sx={{
+            px: 3,
+            py: 1.5,
+            top: 0,
+            position: { md: 'absolute' },
+          }}
+        />
+      </Box>
+    </>
   );
 };
 
