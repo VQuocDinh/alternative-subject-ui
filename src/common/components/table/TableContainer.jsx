@@ -1,6 +1,7 @@
 import { Button } from 'react-bootstrap';
 import TableHeader from './TableHeader';
 import Table from 'react-bootstrap/Table';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * example data
@@ -20,6 +21,7 @@ const TableContainer = ({
   buttonTitle,
   isActionButton,
   handleEdit,
+  onRowClick,
   children,
 }) => {
   return (
@@ -36,11 +38,18 @@ const TableContainer = ({
         <TableHeader header={header} />
         <tbody>
           {data.map((row, rowIndex) => (
-            <tr key={rowIndex}>
+            <tr 
+              key={rowIndex}
+              onClick={() => onRowClick && onRowClick(row.id)}
+              className="cursor-pointer"
+            >
               {header.map((col, colIndex) => (
                 <td key={colIndex}>{row[col]}</td>
               ))}
-              <td className="d-flex justify-content-around align-items-center">
+              <td 
+                className="d-flex justify-content-around align-items-center"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <Button onClick={() => handleEdit(row.id)} className="btn btn-secondary">
                   Chỉnh sửa
                 </Button>

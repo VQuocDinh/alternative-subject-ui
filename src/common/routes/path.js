@@ -53,4 +53,10 @@ export const PATH_DASHBOARD = {
     add: path(ROOT_DASHBOARD, '/treatment/add'),
     edit: path(ROOT_DASHBOARD, '/treatment/edit/:id'),
   },
+  prescription: {
+    root: path(ROOT_DASHBOARD, '/prescription'),
+    list: path(ROOT_DASHBOARD, '/prescription/list'),
+    detail: path(ROOT_DASHBOARD, '/prescription/detail'),
+    add: path(ROOT_DASHBOARD, '/prescription/add'),
+  },
 };
