@@ -7,7 +7,7 @@ const DashboardLayout = () => {
       <div className="d-block w-100 mx-auto">
         <Navbar />
       </div>
-      <div className="content rounded-3 bg-[#eee]" style={{ width: '90%' }}>
+      <div className="content rounded-3 bg-[#F9FAFB]" style={{ width: '90%' }}>
         <Outlet />
       </div>
     </div>
