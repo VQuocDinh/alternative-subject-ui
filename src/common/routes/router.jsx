@@ -17,6 +17,10 @@ const LoginSignUp = lazy(() => import('../../page/LoginSignup'));
 // Management patient
 const ListPatient = lazy(() => import('../../manage-patient/list'));
 
+// Prescription
+const Prescription = lazy(() => import('../../page/prescription'));
+const PrescriptionDetail = lazy(() => import('../../page/prescription/prescription-detail'));
+
 // Layout
 const DashboardLayout = lazy(() => import('../layout/DashboardLayout'));
 
@@ -67,6 +71,24 @@ const routes = [
           {
             path: PATH_DASHBOARD.treatment.vitalSign,
             element: <VitalSignContainer />,
+          },
+        ],
+      },
+      // Prescripption route
+      {
+        path: PATH_DASHBOARD.prescription.root,
+        children: [
+          {
+            path: PATH_DASHBOARD.prescription.list,
+            element: <Prescription />,
+          },
+          {
+            path: PATH_DASHBOARD.prescription.add,
+            element: <div>add patient</div>,
+          },
+          {
+            path: PATH_DASHBOARD.prescription.detail + '/:id',
+            element: <PrescriptionDetail />,
           },
         ],
       },

@@ -41,6 +41,7 @@ const Nav = () => {
     { label: 'Appointments', route: PATH_DASHBOARD.appointment.root },
     { label: 'Schedules', route: PATH_DASHBOARD.schedules.root },
     { label: 'Notifications', route: PATH_DASHBOARD.notification.root },
+    { label: 'Prescription', route: PATH_DASHBOARD.prescription.list },
   ];
 
   return (
