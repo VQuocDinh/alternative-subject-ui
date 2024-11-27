@@ -50,8 +50,15 @@ export const PATH_DASHBOARD = {
     root: path(ROOT_DASHBOARD, '/treatment'),
     common: path(ROOT_DASHBOARD, '/treatment/common'),
     vitalSign: path(ROOT_DASHBOARD, '/treatment/:patientId/vital-sign'),
-    add: path(ROOT_DASHBOARD, '/treatment/add'),
-    edit: path(ROOT_DASHBOARD, '/treatment/edit/:id'),
+    diagnosis: path(ROOT_DASHBOARD, '/treatment/:patientId/diagnosis'),
+    investigation: path(ROOT_DASHBOARD, '/treatment/:patientId/investigation'),
+    prescriptionHistory: path(ROOT_DASHBOARD, '/treatment/:patientId/prescription-history'),
+    detailPrescriptionHistory: path(
+      ROOT_DASHBOARD,
+      '/treatment/:patientId/prescription-history/:prescriptionHistoryId'
+    ),
+    prescription: path(ROOT_DASHBOARD, '/treatment/:patientId/prescription'),
+    detailPrescription: path(ROOT_DASHBOARD, '/treatment/:patientId/prescription/:prescriptionId'),
   },
   prescription: {
     root: path(ROOT_DASHBOARD, '/prescription'),

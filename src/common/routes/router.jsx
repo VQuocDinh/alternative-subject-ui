@@ -27,6 +27,10 @@ const DashboardLayout = lazy(() => import('../layout/DashboardLayout'));
 // Treatment
 const TreatmentCommonContainer = lazy(() => import('../../treatment/index'));
 const VitalSignContainer = lazy(() => import('../../treatment/vital-sign'));
+const PrescriptionHistoryContainer = lazy(() => import('../../treatment/prescription-history'));
+const DetailPrescriptionHistoryContainer = lazy(
+  () => import('../../treatment/detail-prescription-history')
+);
 
 const routes = [
   {
@@ -72,9 +76,17 @@ const routes = [
             path: PATH_DASHBOARD.treatment.vitalSign,
             element: <VitalSignContainer />,
           },
+          {
+            path: PATH_DASHBOARD.treatment.prescriptionHistory,
+            element: <PrescriptionHistoryContainer />,
+          },
+          {
+            path: PATH_DASHBOARD.treatment.detailPrescriptionHistory,
+            element: <DetailPrescriptionHistoryContainer />,
+          },
         ],
       },
-      // Prescripption route
+      // Prescription route
       {
         path: PATH_DASHBOARD.prescription.root,
         children: [
