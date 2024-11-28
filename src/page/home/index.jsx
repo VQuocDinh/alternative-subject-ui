@@ -1,10 +1,14 @@
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import './index.scoped.scss';
+import { useNavigate } from 'react-router-dom';
 
-const Patient = () => {
+const Home = () => {
+  const navigate = useNavigate()
   return (
     <Container className="p-5">
       <Row className="nav align-items-center justify-content-between">
+
+        <Col>
         <Col>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -49,12 +53,15 @@ const Patient = () => {
         </Col>
 
         <Col className="d-flex gap-5">
-          <a href="http://localhost:3000/add-patient">Appointments</a>
-          <a href="http://localhost:3000/add-patient">Prescriptions</a>
+          <a href="">Appointments</a>
+          <a href="">Prescriptions</a>
         </Col>
+        </Col>
+       
 
-        <Col className="d-flex justify-content-end">
+        <Col className="d-flex justify-content-end gap-3">
           <Button>Book now</Button>
+          <Button variant='outline-secondary' onClick={()=>{navigate('/auth/login')}}>Log in</Button>
         </Col>
       </Row>
       <Row className="mt-5">
@@ -163,4 +170,4 @@ const Patient = () => {
   );
 };
 
-export default Patient;
+export default Home;

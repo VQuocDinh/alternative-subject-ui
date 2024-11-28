@@ -6,6 +6,8 @@ const ROOT_AUTH = '/auth';
 
 const ROOT_DASHBOARD = '/dashboard';
 
+const ROOT = '/';
+
 export const PATH_AUTHENTICATION = {
   root: ROOT_AUTH,
   login: path(ROOT_AUTH, '/login'),
@@ -67,3 +69,8 @@ export const PATH_DASHBOARD = {
     add: path(ROOT_DASHBOARD, '/prescription/add'),
   },
 };
+
+
+export const PATH_HOME = {
+  root: path(ROOT, '/')
+}
