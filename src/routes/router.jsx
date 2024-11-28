@@ -17,7 +17,7 @@ const LoginSignUp = lazy(() => import("../page/LoginSignup"));
 const Information = lazy(() => import("../page/Information"));
 const Admin = lazy(() => import("../page/Admin"));
 const User = lazy(() => import("../page/User"));
-const Patient = lazy(() => import("../page/Patient/index"));
+const Patient = lazy(() => import("../page/home/index"));
 
 const AdminComponents = {
   Overview: lazy(() => import("../components/admin/Overview/Overview")),

@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { useRoutes } from 'react-router-dom';
-import { PATH_AUTHENTICATION, PATH_DASHBOARD } from './path';
+import { PATH_AUTHENTICATION, PATH_DASHBOARD, PATH_HOME } from './path';
+import { elements } from 'chart.js';
 
 // HOC tạo Router
 const withRoutes = (routes) => {
@@ -31,6 +32,10 @@ const PrescriptionHistoryContainer = lazy(() => import('../../treatment/prescrip
 const DetailPrescriptionHistoryContainer = lazy(
   () => import('../../treatment/detail-prescription-history')
 );
+
+// home
+const Home = lazy(() => import("../../page/home"));
+
 
 const routes = [
   {
@@ -106,6 +111,10 @@ const routes = [
       },
     ],
   },
+  {
+    path: PATH_HOME.root,
+    element: <Home />
+  }
 ];
 
 const AppRouter = withRoutes(routes);
