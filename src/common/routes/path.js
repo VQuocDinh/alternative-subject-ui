@@ -6,7 +6,7 @@ const ROOT_AUTH = '/auth';
 
 const ROOT_DASHBOARD = '/dashboard';
 
-const ROOT = '/';
+const ROOT = '';
 
 export const PATH_AUTHENTICATION = {
   root: ROOT_AUTH,
@@ -70,7 +70,11 @@ export const PATH_DASHBOARD = {
   },
 };
 
-
 export const PATH_HOME = {
-  root: path(ROOT, '/')
-}
+  root: ROOT,
+  home: path(ROOT, '/home'),
+  prescription: {
+    root: path(ROOT, '/prescription'),
+    detail: path(ROOT, '/prescription/:id')
+  }
+};

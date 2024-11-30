@@ -1,7 +1,9 @@
 import { lazy, Suspense } from 'react';
 import { useRoutes } from 'react-router-dom';
 import { PATH_AUTHENTICATION, PATH_DASHBOARD, PATH_HOME } from './path';
-import { elements } from 'chart.js';
+import PatientPrescription from '../../page/patient-prescription';
+import HomeLayout from '../layout/HomeLayout';
+import Home from '../../page/home';
 
 // HOC tạo Router
 const withRoutes = (routes) => {
@@ -13,7 +15,7 @@ const withRoutes = (routes) => {
 };
 
 // Lazy loaded components
-const LoginSignUp = lazy(() => import('../../page/LoginSignup'));
+const LoginSignUp = lazy(() => import('../../page/login/LoginSignup'));
 
 // Management patient
 const ListPatient = lazy(() => import('../../manage-patient/list'));
@@ -33,11 +35,8 @@ const DetailPrescriptionHistoryContainer = lazy(
   () => import('../../treatment/detail-prescription-history')
 );
 
-// home
-const Home = lazy(() => import("../../page/home"));
-
-
 const routes = [
+  // auth
   {
     path: PATH_AUTHENTICATION.root,
     children: [
@@ -49,6 +48,8 @@ const routes = [
       { path: PATH_AUTHENTICATION.register, element: <div>register</div> },
     ],
   },
+
+  // dashboard
   {
     path: PATH_DASHBOARD.root,
     element: <DashboardLayout />,
@@ -105,16 +106,32 @@ const routes = [
           },
           {
             path: PATH_DASHBOARD.prescription.detail + '/:id',
-            element: <PrescriptionDetail />,
+            element: <DetailPrescriptionHistoryContainer />,
           },
         ],
       },
     ],
   },
+
+  // root
   {
     path: PATH_HOME.root,
-    element: <Home />
-  }
+    element: <HomeLayout />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+      {
+        path: PATH_HOME.prescription.root,
+        element: <PatientPrescription />,
+      },
+      {
+        path: PATH_HOME.prescription.detail + '/:id',
+        element: <PrescriptionDetail />,
+      },
+    ],
+  },
 ];
 
 const AppRouter = withRoutes(routes);

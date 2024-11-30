@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Page from '../common/components/Page';
 import DashboardWidgets from './common/components/DashboardWidget';
 import PatientTable from './common/components/PatientTable';
-import { PATIENT_LIST_MOCK_DATA, STATUSES_TREATMENT } from './common/constant';
+import { STATUSES_TREATMENT } from './common/constant';
 import PatientService from '../service/patient';
 
 const TreatmentCommonContainer = () => {
@@ -15,7 +15,6 @@ const TreatmentCommonContainer = () => {
     setError(null)
     try {
       const response = await PatientService.getAll()
-      console.log('data: ', response)
       if(response?.success) {
         setPatientList(response.data || [])
       } else {
