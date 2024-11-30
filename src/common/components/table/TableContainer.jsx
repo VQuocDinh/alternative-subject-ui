@@ -23,6 +23,7 @@ const TableContainer = ({
   handleEdit,
   onRowClick,
   children,
+  headerMapping
 }) => {
   return (
     <div className="p-3">
@@ -35,7 +36,7 @@ const TableContainer = ({
         )}
       </div>
       <Table striped bordered hover>
-        <TableHeader header={header} />
+        <TableHeader header={headerMapping ? header.map(h => headerMapping[h]): header} />
         <tbody>
           {data.map((row, rowIndex) => (
             <tr 

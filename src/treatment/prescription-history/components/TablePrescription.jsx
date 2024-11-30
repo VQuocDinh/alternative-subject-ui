@@ -1,11 +1,12 @@
 import Page from '../../../common/components/Page';
 import TableContainer from '../../../common/components/table/TableContainer';
 import { Pagination, Card, Form, InputGroup } from 'react-bootstrap';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 import { replacePathParams } from '../../../common/utils/common.utils';
 import { PATH_DASHBOARD } from '../../../common/routes/path';
+import PrescriptionService from '../../../service/prescription';
 
 const TablePrescription = () => {
   const params = useParams();
@@ -13,54 +14,55 @@ const TablePrescription = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const prescriptionPerPage = 5;
+  const [prescriptions, setPrescriptions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const presciptionPerPage = 5;
 
-  const header = ['id', 'Mã bệnh án', 'Bác sĩ', 'Ngày kê đơn', 'Ghi chú'];
-  const prescriptions = [
-    {
-      id: 1,
-      'Mã bệnh án': 1,
-      'Bác sĩ': 'Bs. Nguyễn Văn An',
-      'Ngày kê đơn': '2024-03-15 09:30:00',
-      'Ghi chú': 'Uống thuốc sau bữa ăn, mỗi ngày 3 lần',
-    },
-    {
-      id: 2,
-      'Mã bệnh án': 2,
-      'Bác sĩ': 'Bs. Trần Thị Bình',
-      'Ngày kê đơn': '2024-03-15 10:45:00',
-      'Ghi chú': 'Uống thuốc trước khi đi ngủ',
-    },
-    {
-      id: 3,
-      'Mã bệnh án': 3,
-      'Bác sĩ': 'Bs. Lê Văn Cường',
-      'Ngày kê đơn': '2024-03-14 14:20:00',
-      'Ghi chú': 'Kê đơn điều trị viêm họng cấp',
-    },
-    {
-      id: 4,
-      'Mã bệnh án': 1,
-      'Bác sĩ': 'Bs. Nguyễn Văn An',
-      'Ngày kê đơn': '2024-03-14 16:00:00',
-      'Ghi chú': 'Tái khám sau 1 tuần nếu không đỡ',
-    },
-    {
-      id: 5,
-      'Mã bệnh án': 4,
-      'Bác sĩ': 'Bs. Phạm Thị Dung',
-      'Ngày kê đơn': '2024-03-13 11:15:00',
-      'Ghi chú': 'Điều trị dài ngày, uống đủ liều',
-    },
-  ];
+  const getPrescriptionsByPatient = async () => {
+    setIsLoading(true);
+    try {
+      const response = await PrescriptionService.getByPatient();
+      console.log('response.data.data: ', response.data.data)
+      if (response?.data?.success) {
+        setPrescriptions(response.data.data || []);
+      }
+    } catch (error) {
+      console.error('Error fetching presciption list:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const filteredPrescriptions = prescriptions.filter(
-    (prescription) =>
-      prescription['Bác sĩ'].toLowerCase().includes(searchTerm.toLowerCase()) ||
-      prescription['Ghi chú'].toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    getPrescriptionsByPatient();
+  }, []);
 
-  const indexOfLastPrescription = currentPage * prescriptionPerPage;
-  const indexOfFirstPrescription = indexOfLastPrescription - prescriptionPerPage;
+  if (isLoading) {
+    return <div>Loading presciption...</div>;
+  }
+
+  const header = ['id', 'medical_record_id', 'doctor_name', 'prescribed_at', 'notes'];
+
+  const formatPrescriptionData = (prescriptions) => {
+    return prescriptions.map((prescription) => ({
+      id: prescription.id,
+      medical_record_id: prescription.medical_record_id,
+      doctor_name: `${prescription.doctor.first_name} ${prescription.doctor.last_name}`,
+      prescribed_at: new Date(prescription.prescribed_at).toLocaleDateString('vi-VN'),
+      notes: prescription.notes,
+    }));
+  };
+
+  const filteredPrescriptions = prescriptions
+    ? formatPrescriptionData(prescriptions).filter(
+        (prescription) =>
+          prescription.doctor_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          prescription.notes.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
+
+  const indexOfLastPrescription = currentPage * presciptionPerPage;
+  const indexOfFirstPrescription = indexOfLastPrescription - presciptionPerPage;
   const currentPresciption = filteredPrescriptions.slice(
     indexOfFirstPrescription,
     indexOfLastPrescription
@@ -78,6 +80,14 @@ const TablePrescription = () => {
         prescriptionHistoryId: id,
       })
     );
+  };
+
+  const headerMapping = {
+    id: 'ID',
+    medical_record_id: 'Mã bệnh án',
+    doctor_name: 'Bác sĩ',
+    prescribed_at: 'Ngày kê đơn',
+    notes: 'Ghi chú',
   };
 
   return (
@@ -106,6 +116,7 @@ const TablePrescription = () => {
 
             <div className="table-container">
               <TableContainer
+                headerMapping={headerMapping}
                 header={header}
                 data={currentPresciption}
                 isActionButton={true}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Navbar from "../components/layout/Navbar/Navbar";
+import Navbar from "../../components/layout/Navbar/Navbar";
 import { Outlet, useLocation } from "react-router-dom";
 
 const CustomerLayout = () => {
