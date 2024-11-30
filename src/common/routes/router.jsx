@@ -32,6 +32,7 @@ const PrescriptionHistoryContainer = lazy(() => import('../../treatment/prescrip
 const DetailPrescriptionHistoryContainer = lazy(
   () => import('../../treatment/detail-prescription-history')
 );
+const PrescriptionContainer = lazy(() => import('../../treatment/doctor-prescription'));
 
 // home
 const Home = lazy(() => import("../../page/home"));
@@ -88,6 +89,10 @@ const routes = [
           {
             path: PATH_DASHBOARD.treatment.detailPrescriptionHistory,
             element: <DetailPrescriptionHistoryContainer />,
+          },
+          {
+            path: PATH_DASHBOARD.treatment.prescription,
+            element: <PrescriptionContainer />,
           },
         ],
       },

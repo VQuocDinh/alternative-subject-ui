@@ -66,7 +66,7 @@ const MiniSidebar = () => {
         <Button
           onClick={() =>
             navigate(
-              replacePathParams(PATH_DASHBOARD.treatment.prescriptionHistory, {
+              replacePathParams(PATH_DASHBOARD.treatment.prescription, {
                 patientId: params?.patientId,
               })
             )
