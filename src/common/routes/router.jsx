@@ -106,7 +106,7 @@ const routes = [
             element: <div>add patient</div>,
           },
           {
-            path: PATH_DASHBOARD.prescription.detail + '/:id',
+            path: PATH_DASHBOARD.prescription.detail,
             element: <DetailPrescriptionHistoryContainer />,
           },
         ],
@@ -137,7 +137,7 @@ const routes = [
         element: <PatientPrescription />,
       },
       {
-        path: PATH_HOME.prescription.detail + '/:id',
+        path: PATH_HOME.prescription.detail,
         element: <PrescriptionDetail />,
       },
     ],
