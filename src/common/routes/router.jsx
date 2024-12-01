@@ -21,8 +21,8 @@ const LoginSignUp = lazy(() => import('../../page/login/LoginSignup'));
 const ListPatient = lazy(() => import('../../manage-patient/list'));
 
 // Prescription
-const Prescription = lazy(() => import('../../page/prescription'));
-const PrescriptionDetail = lazy(() => import('../../page/prescription/prescription-detail'));
+// const Prescription = lazy(() => import('../../page/prescription'));
+const PrescriptionDetail = lazy(() => import('../../page/patient-prescription/prescription-detail'));
 
 // Layout
 const DashboardLayout = lazy(() => import('../layout/DashboardLayout'));
@@ -101,10 +101,6 @@ const routes = [
       {
         path: PATH_DASHBOARD.prescription.root,
         children: [
-          {
-            path: PATH_DASHBOARD.prescription.list,
-            element: <Prescription />,
-          },
           {
             path: PATH_DASHBOARD.prescription.add,
             element: <div>add patient</div>,

@@ -1,30 +1,32 @@
 import Page from '../../../common/components/Page';
 import TableContainer from '../../../common/components/table/TableContainer';
-import { Pagination, Card, Form, InputGroup } from 'react-bootstrap';
+import { Card, Form, InputGroup } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 import { replacePathParams } from '../../../common/utils/common.utils';
 import { PATH_DASHBOARD } from '../../../common/routes/path';
 import PrescriptionService from '../../../service/prescription';
+import Pagination from '../../../common/components/Pagination';
 
 const TablePrescription = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const presciptionPerPage = 5;
+  const [totalPages, setTotalPages] = useState(null);
   const params = useParams();
   const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
-  const prescriptionPerPage = 5;
   const [prescriptions, setPrescriptions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const presciptionPerPage = 5;
 
   const getPrescriptionsByPatient = async () => {
     setIsLoading(true);
     try {
       const response = await PrescriptionService.getByPatient();
-      console.log('response.data.data: ', response.data.data)
+      console.log('response.data.data: ', response.data)
       if (response?.data?.success) {
         setPrescriptions(response.data.data || []);
+        setTotalPages(Math.ceil(response.data.total / presciptionPerPage));
       }
     } catch (error) {
       console.error('Error fetching presciption list:', error);
@@ -67,7 +69,6 @@ const TablePrescription = () => {
     indexOfFirstPrescription,
     indexOfLastPrescription
   );
-  const totalPages = Math.ceil(filteredPrescriptions.length / prescriptionPerPage);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -125,37 +126,11 @@ const TablePrescription = () => {
               />
             </div>
 
-            <div className="d-flex justify-content-between align-items-center mt-4">
-              <div className="text-muted">
-                Hiển thị {indexOfFirstPrescription + 1} đến{' '}
-                {Math.min(indexOfLastPrescription, filteredPrescriptions.length)} trong số{' '}
-                {filteredPrescriptions.length} đơn thuốc
-              </div>
-              <Pagination className="mb-0">
-                <Pagination.First onClick={() => setCurrentPage(1)} disabled={currentPage === 1} />
-                <Pagination.Prev
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                />
-                {[...Array(totalPages).keys()].map((page) => (
-                  <Pagination.Item
-                    key={page + 1}
-                    onClick={() => handlePageChange(page + 1)}
-                    active={page + 1 === currentPage}
-                  >
-                    {page + 1}
-                  </Pagination.Item>
-                ))}
-                <Pagination.Next
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                />
-                <Pagination.Last
-                  onClick={() => setCurrentPage(totalPages)}
-                  disabled={currentPage === totalPages}
-                />
-              </Pagination>
-            </div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
           </Card.Body>
         </Card>
       </div>
