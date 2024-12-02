@@ -1,8 +1,8 @@
-@import "./var.scss";
+@import "../../assets/style/var.scss";
 
 .login-signup {
   height: 100vh;
-  background: url(../image/bgrLogin.png) no-repeat center / cover;
+  background: url(../../assets/image/bgrLogin.png) no-repeat center / cover;
   background-size: 350px 900px;
   background-position-x: right;
   display: flex;
