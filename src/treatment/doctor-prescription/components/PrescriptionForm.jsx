@@ -1,176 +1,315 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import FormProvider from '../../../common/components/hook-form/FormProvider';
 import Page from '../../../common/components/Page';
-import { Button, Col, Form, Row } from 'react-bootstrap';
+import { Button, Col, Form, Row, Badge, Card, Table, ButtonGroup } from 'react-bootstrap';
 import RHFSelect from '../../../common/components/hook-form/RHFSelect';
 import { MenuItem } from '@mui/material';
 import RHFTextField from '../../../common/components/hook-form/RHFTextField';
+import InteractionModal from './InteractionModal';
 
 const PrescriptionForm = () => {
-  const methods = useForm();
+  const methods = useForm({
+    defaultValues: {
+      pharmacyId: '',
+      drugId: '',
+      quantity: '',
+      unit: '',
+      frequency: '',
+      duration: '',
+      durationUnit: 'days',
+      route: '',
+      timing: '',
+      instructions: '',
+      notes: '',
+    },
+  });
+  const [showInteractionModal, setShowInteractionModal] = useState(false);
+  const [drugInteractions, setDrugInteractions] = useState([]);
+  const [selectedDrugs, setSelectedDrugs] = useState([]);
+
+  const drugsList = [
+    { id: 1, name: 'Paracetamol 500mg', unit: 'viên' },
+    { id: 2, name: 'Amoxicillin 500mg', unit: 'viên' },
+    { id: 3, name: 'Omeprazole 20mg', unit: 'viên' },
+  ];
+
+  const unitOptions = [
+    { value: 'tablet', label: 'Viên' },
+    { value: 'bottle', label: 'Chai' },
+    { value: 'pack', label: 'Gói' },
+    { value: 'tube', label: 'Ống' },
+  ];
+
+  const frequencyOptions = [
+    { value: 'once_daily', label: '1 lần/ngày' },
+    { value: 'twice_daily', label: '2 lần/ngày' },
+    { value: 'three_daily', label: '3 lần/ngày' },
+    { value: 'four_daily', label: '4 lần/ngày' },
+    { value: 'when_needed', label: 'Khi cần' },
+  ];
+
+  const timingOptions = [
+    { value: 'before_meal', label: 'Trước ăn' },
+    { value: 'after_meal', label: 'Sau ăn' },
+    { value: 'with_meal', label: 'Trong bữa ăn' },
+    { value: 'empty_stomach', label: 'Lúc đói' },
+    { value: 'anytime', label: 'Không phụ thuộc bữa ăn' },
+  ];
+
+  const routeOptions = [
+    { value: 'oral', label: 'Uống' },
+    { value: 'injection', label: 'Tiêm' },
+    { value: 'topical', label: 'Bôi ngoài da' },
+    { value: 'inhale', label: 'Hít' },
+  ];
+
+  const checkDrugInteractions = async (drugId) => {
+    try {
+      // const response = await axios.post('/api/check-drug-interactions', {
+      //   selectedDrugs,
+      //   newDrug: drugId
+      // });
+
+      const mockInteractions = [
+        {
+          severity: 'high',
+          description: 'Tương tác nghiêm trọng giữa Drug A và Drug B',
+          recommendation: 'Không nên kê đơn đồng thời',
+        },
+        {
+          severity: 'medium',
+          description: 'Có thể gây tác dụng phụ khi dùng chung',
+          recommendation: 'Cân nhắc điều chỉnh liều lượng',
+        },
+      ];
+
+      setDrugInteractions(mockInteractions);
+      setShowInteractionModal(true);
+    } catch (error) {
+      console.error('Error checking drug interactions:', error);
+    }
+  };
+
+  const handleDrugSelect = (drugId) => {
+    setSelectedDrugs([...selectedDrugs, drugId]);
+    checkDrugInteractions(drugId);
+  };
+
   const handleSubmit = () => {};
+
+  const handleEditDrug = (index) => {};
+
+  const handleDeleteDrug = (index) => {};
+
+  const handleAddDrug = () => {};
+
+  const handleCancel = () => {};
 
   return (
     <Page>
-      <div className="p-2">
-        <FormProvider onSubmit={handleSubmit} methods={methods}>
-          <h3 className="mb-4 fw-bold">Kê đơn thuốc</h3>
-          <Row className="mb-3">
-            <Col md={8}>
-              <RHFSelect name="pharmacity" label={'Cửa hàng thuốc'} SelectProps={{ native: false }}>
-                <MenuItem value="good">Cửa hàng thuốc 1</MenuItem>
-                <MenuItem value="average">Cửa hàng thuốc 2</MenuItem>
-                <MenuItem value="poor">Cửa hàng thuốc 3</MenuItem>
-              </RHFSelect>
-            </Col>
-          </Row>
-          <Row className="mb-3">
-            <Col md={12}>
-              <RHFTextField name="prescription" placeholder="Thuốc" label="Thuốc" />
-            </Col>
-          </Row>
-          <Row className="mb-3">
-            <Col md={6}>
-              <Row className="align-items-center">
-                <Col md={2}>
-                  <h5
-                    className="fw-bold text-nowrap m-0"
-                    style={{ fontSize: '16px', lineHeight: '24px' }}
+      <div className="p-4">
+        <FormProvider methods={methods} onSubmit={handleSubmit}>
+          <Card>
+            <Card.Header>
+              <h4 className="mb-0">Kê đơn thuốc</h4>
+            </Card.Header>
+            <Card.Body>
+              {/* Chọn thuốc */}
+              <Row className="mb-4">
+                <Col md={12}>
+                  <RHFSelect
+                    name="drugId"
+                    label="Tên thuốc *"
+                    SelectProps={{ native: false }}
+                    onChange={(e) => handleDrugSelect(e.target.value)}
                   >
-                    Số lượng
-                  </h5>
-                </Col>
-                <Col md={4}>
-                  <RHFTextField name="quantity" placeholder="Số lượng" />
-                </Col>
-                <Col md={4}>
-                  <RHFSelect name="form" SelectProps={{ native: false }}>
-                    <MenuItem value="A">A - Alert</MenuItem>
-                    <MenuItem value="V">V - Voice</MenuItem>
-                    <MenuItem value="P">P - Pain</MenuItem>
-                    <MenuItem value="U">U - Unresponsive</MenuItem>
+                    <MenuItem value="">Chọn thuốc</MenuItem>
+                    {drugsList.map((drug) => (
+                      <MenuItem key={drug.id} value={drug.id}>
+                        {drug.name}
+                      </MenuItem>
+                    ))}
                   </RHFSelect>
                 </Col>
               </Row>
-            </Col>
-            <Col md={6}>
-              <Row className="align-items-center">
-                <Col md={4}>
-                  <h5
-                    className="fw-bold text-nowrap m-0"
-                    style={{ fontSize: '16px', lineHeight: '24px' }}
-                  >
-                    Tần suất sử dụng
-                  </h5>
+
+              <Row className="mb-4">
+                <Col md={6}>
+                  <RHFTextField
+                    name="quantity"
+                    label="Số lượng *"
+                    type="number"
+                    placeholder="Nhập số lượng"
+                  />
                 </Col>
-                <Col md={8}>
-                  <RHFSelect name="frequency" SelectProps={{ native: false }}>
-                    <MenuItem value="A">A - Alert</MenuItem>
-                    <MenuItem value="V">V - Voice</MenuItem>
-                    <MenuItem value="P">P - Pain</MenuItem>
-                    <MenuItem value="U">U - Unresponsive</MenuItem>
+                <Col md={6}>
+                  <RHFSelect
+                    name="unit"
+                    label="Đơn vị *"
+                    SelectProps={{ native: false }}
+                  >
+                    {unitOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
                   </RHFSelect>
                 </Col>
               </Row>
-            </Col>
-          </Row>
-          <Row className="mb-3">
-            <Col md={6}>
-              <Row className="align-items-center">
-                <Col md={2}>
-                  <h5
-                    className="fw-bold text-nowrap m-0"
-                    style={{ fontSize: '16px', lineHeight: '24px' }}
+
+              <Row className="mb-4">
+                <Col md={6}>
+                  <RHFSelect
+                    name="frequency"
+                    label="Tần suất sử dụng *"
+                    SelectProps={{ native: false }}
                   >
-                    Số ngày
-                  </h5>
+                    {frequencyOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </RHFSelect>
                 </Col>
-                <Col md={4}>
-                  <RHFTextField name="quantity" placeholder="Số ngày" />
-                </Col>
-                <Col md={4}>
-                  <RHFSelect name="form" SelectProps={{ native: false }}>
-                    <MenuItem value="A">A - Alert</MenuItem>
-                    <MenuItem value="V">V - Voice</MenuItem>
-                    <MenuItem value="P">P - Pain</MenuItem>
-                    <MenuItem value="U">U - Unresponsive</MenuItem>
+                <Col md={6}>
+                  <RHFSelect
+                    name="timing"
+                    label="Thời điểm dùng *"
+                    SelectProps={{ native: false }}
+                  >
+                    {timingOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
                   </RHFSelect>
                 </Col>
               </Row>
-            </Col>
-            <Col md={6}>
-              <Row className="align-items-center">
-                <Col md={4}>
-                  <h5
-                    className="fw-bold text-nowrap m-0"
-                    style={{ fontSize: '16px', lineHeight: '24px' }}
-                  >
-                    Tần suất sử dụng
-                  </h5>
+
+              <Row className="mb-4">
+                <Col md={6}>
+                  <RHFTextField
+                    name="duration"
+                    label="Thời gian điều trị *"
+                    type="number"
+                    placeholder="Nhập số ngày"
+                  />
                 </Col>
-                <Col md={8}>
-                  <RHFSelect name="frequency" SelectProps={{ native: false }}>
-                    <MenuItem value="A">A - Alert</MenuItem>
-                    <MenuItem value="V">V - Voice</MenuItem>
-                    <MenuItem value="P">P - Pain</MenuItem>
-                    <MenuItem value="U">U - Unresponsive</MenuItem>
+                <Col md={6}>
+                  <RHFSelect
+                    name="route"
+                    label="Đường dùng *"
+                    SelectProps={{ native: false }}
+                  >
+                    {routeOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
                   </RHFSelect>
                 </Col>
               </Row>
-            </Col>
-          </Row>
-          <Row className="mb-3 align-items-center">
-            <Col md={3}>
-              <h5
-                className="fw-bold text-nowrap m-0"
-                style={{ fontSize: '16px', lineHeight: '24px' }}
-              >
-                Đường sử dụng
-              </h5>
-            </Col>
-            <Col md={2}>
-              <RHFSelect name="form" SelectProps={{ native: false }}>
-                <MenuItem value="A">A - Alert</MenuItem>
-                <MenuItem value="V">V - Voice</MenuItem>
-                <MenuItem value="P">P - Pain</MenuItem>
-                <MenuItem value="U">U - Unresponsive</MenuItem>
-              </RHFSelect>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={3}>
-              <h5
-                className="fw-bold text-nowrap m-0"
-                style={{ fontSize: '16px', lineHeight: '24px' }}
-              >
-                Chỉ dẫn
-              </h5>
-            </Col>
-            <Col md={6}>
-              <Form.Group controlId="note">
-                <Form.Control as="textarea" rows={1} name="note" placeholder="Ghi chú" />
-              </Form.Group>
-            </Col>
-          </Row>
-          <div className="mt-4 text-end">
-            <Button
-              variant="primary"
-              type="submit"
-              className="fw-bold"
-              style={{ minWidth: '150px' }}
-            >
-              Thêm thuốc
-            </Button>
-            <Button
-              variant="outline-secondary"
-              className="ms-3 fw-bold"
-              type="button"
-              style={{ minWidth: '100px' }}
-            >
-              Hủy
-            </Button>
-          </div>
+
+              <Row className="mb-4">
+                <Col md={12}>
+                  <RHFTextField
+                    name="instructions"
+                    label="Hướng dẫn sử dụng"
+                    multiline
+                    rows={2}
+                    placeholder="VD: Uống sau khi ăn, không nhai..."
+                  />
+                </Col>
+              </Row>
+
+              <Row className="mb-4">
+                <Col md={12}>
+                  <RHFTextField
+                    name="notes"
+                    label="Ghi chú"
+                    multiline
+                    rows={2}
+                    placeholder="Ghi chú thêm về đơn thuốc"
+                  />
+                </Col>
+              </Row>
+
+              {selectedDrugs.length > 0 && (
+                <div className="mb-4">
+                  <h5 className="mb-3">Thuốc đã kê ({selectedDrugs.length})</h5>
+                  <Table responsive bordered hover>
+                    <thead>
+                      <tr>
+                        <th>Tên thuốc</th>
+                        <th>Liều dùng</th>
+                        <th>Tần suất</th>
+                        <th>Thời gian</th>
+                        <th>Thao tác</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedDrugs.map((drug, index) => (
+                        <tr key={index}>
+                          <td>{drug.name}</td>
+                          <td>{`${drug.quantity} ${drug.unit}`}</td>
+                          <td>{drug.frequency}</td>
+                          <td>{`${drug.duration} ngày`}</td>
+                          <td>
+                            <ButtonGroup size="sm">
+                              <Button 
+                                variant="outline-primary"
+                                onClick={() => handleEditDrug(index)}
+                              >
+                                <i className="fas fa-edit"></i>
+                              </Button>
+                              <Button 
+                                variant="outline-danger"
+                                onClick={() => handleDeleteDrug(index)}
+                              >
+                                <i className="fas fa-trash"></i>
+                              </Button>
+                            </ButtonGroup>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
+              )}
+
+              <div className="d-flex justify-content-end gap-2">
+                <Button
+                  variant="primary"
+                  type="submit"
+                  disabled={selectedDrugs.length === 0}
+                >
+                  Lưu đơn thuốc
+                </Button>
+                <Button
+                  variant="outline-primary"
+                  type="button"
+                  onClick={handleAddDrug}
+                >
+                  Thêm thuốc
+                </Button>
+                <Button
+                  variant="outline-secondary"
+                  type="button"
+                  onClick={handleCancel}
+                >
+                  Hủy
+                </Button>
+              </div>
+            </Card.Body>
+          </Card>
         </FormProvider>
+
+        <InteractionModal
+          showInteractionModal={showInteractionModal}
+          setShowInteractionModal={setShowInteractionModal}
+          drugInteractions={drugInteractions}
+        />
       </div>
     </Page>
   );

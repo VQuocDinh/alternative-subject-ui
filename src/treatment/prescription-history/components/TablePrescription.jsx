@@ -23,7 +23,6 @@ const TablePrescription = () => {
     setIsLoading(true);
     try {
       const response = await PrescriptionService.getByPatient();
-      console.log('response.data.data: ', response.data)
       if (response?.data?.success) {
         setPrescriptions(response.data.data || []);
         setTotalPages(Math.ceil(response.data.total / presciptionPerPage));
@@ -98,7 +97,14 @@ const TablePrescription = () => {
           <Card.Body>
             <div className="d-flex justify-content-between align-items-center mb-4">
               <h4 className="mb-0 text-primary">Danh sách đơn thuốc</h4>
-              <button className="btn btn-primary">+ Thêm mới đơn thuốc</button>
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  navigate(PATH_DASHBOARD.treatment.prescription);
+                }}
+              >
+                + Thêm mới đơn thuốc
+              </button>
             </div>
 
             <div className="mb-4">
