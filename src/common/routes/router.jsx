@@ -19,10 +19,13 @@ const LoginSignUp = lazy(() => import('../../page/login/LoginSignup'));
 
 // Management patient
 const ListPatient = lazy(() => import('../../manage-patient/list'));
+const AddPatient = lazy(() => import('../../manage-patient/add-patient'));
 
 // Prescription
 // const Prescription = lazy(() => import('../../page/prescription'));
-const PrescriptionDetail = lazy(() => import('../../page/patient-prescription/prescription-detail'));
+const PrescriptionDetail = lazy(
+  () => import('../../page/patient-prescription/prescription-detail')
+);
 
 // Layout
 const DashboardLayout = lazy(() => import('../layout/DashboardLayout'));
@@ -64,7 +67,7 @@ const routes = [
           },
           {
             path: PATH_DASHBOARD.manage_patient.add,
-            element: <div>add patient</div>,
+            element: <AddPatient />,
           },
           {
             path: PATH_DASHBOARD.manage_patient.edit + '/:id',
@@ -117,9 +120,9 @@ const routes = [
           {
             path: PATH_DASHBOARD.appointment.add,
             element: <AppoimentAdd />,
-          }
-        ]
-      }
+          },
+        ],
+      },
     ],
   },
 
