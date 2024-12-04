@@ -13,6 +13,8 @@ const withRoutes = (routes) => {
     return <Suspense fallback={<div>Loading...</div>}>{routing}</Suspense>;
   };
 };
+const DoctorAvailability = lazy(() => import('../../appointment/da'));
+
 const AppoimentAdd = lazy(() => import('../../appointment/add'));
 // Lazy loaded components
 const LoginSignUp = lazy(() => import('../../page/login/LoginSignup'));
@@ -121,8 +123,12 @@ const routes = [
             path: PATH_DASHBOARD.appointment.add,
             element: <AppoimentAdd />,
           },
-        ],
-      },
+          {
+            path: PATH_DASHBOARD.appointment.da,
+            element: <DoctorAvailability />,
+          }
+        ]
+      }
     ],
   },
 
