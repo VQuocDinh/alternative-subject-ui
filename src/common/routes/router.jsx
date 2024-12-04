@@ -1,6 +1,9 @@
 import { lazy, Suspense } from 'react';
 import { useRoutes } from 'react-router-dom';
-import { PATH_AUTHENTICATION, PATH_DASHBOARD } from './path';
+import { PATH_AUTHENTICATION, PATH_DASHBOARD, PATH_HOME } from './path';
+import PatientPrescription from '../../page/patient-prescription';
+import HomeLayout from '../layout/HomeLayout';
+import Home from '../../page/home';
 
 // HOC tạo Router
 const withRoutes = (routes) => {
@@ -14,14 +17,17 @@ const DoctorAvailability = lazy(() => import('../../appointment/da'));
 
 const AppoimentAdd = lazy(() => import('../../appointment/add'));
 // Lazy loaded components
-const LoginSignUp = lazy(() => import('../../page/LoginSignup'));
+const LoginSignUp = lazy(() => import('../../page/login/LoginSignup'));
 
 // Management patient
 const ListPatient = lazy(() => import('../../manage-patient/list'));
+const AddPatient = lazy(() => import('../../manage-patient/add-patient'));
 
 // Prescription
-const Prescription = lazy(() => import('../../page/prescription'));
-const PrescriptionDetail = lazy(() => import('../../page/prescription/prescription-detail'));
+// const Prescription = lazy(() => import('../../page/prescription'));
+const PrescriptionDetail = lazy(
+  () => import('../../page/patient-prescription/prescription-detail')
+);
 
 // Layout
 const DashboardLayout = lazy(() => import('../layout/DashboardLayout'));
@@ -29,8 +35,14 @@ const DashboardLayout = lazy(() => import('../layout/DashboardLayout'));
 // Treatment
 const TreatmentCommonContainer = lazy(() => import('../../treatment/index'));
 const VitalSignContainer = lazy(() => import('../../treatment/vital-sign'));
+const PrescriptionHistoryContainer = lazy(() => import('../../treatment/prescription-history'));
+const DetailPrescriptionHistoryContainer = lazy(
+  () => import('../../treatment/detail-prescription-history')
+);
+const PrescriptionContainer = lazy(() => import('../../treatment/doctor-prescription'));
 
 const routes = [
+  // auth
   {
     path: PATH_AUTHENTICATION.root,
     children: [
@@ -42,6 +54,8 @@ const routes = [
       { path: PATH_AUTHENTICATION.register, element: <div>register</div> },
     ],
   },
+
+  // dashboard
   {
     path: PATH_DASHBOARD.root,
     element: <DashboardLayout />,
@@ -55,7 +69,7 @@ const routes = [
           },
           {
             path: PATH_DASHBOARD.manage_patient.add,
-            element: <div>add patient</div>,
+            element: <AddPatient />,
           },
           {
             path: PATH_DASHBOARD.manage_patient.edit + '/:id',
@@ -74,23 +88,31 @@ const routes = [
             path: PATH_DASHBOARD.treatment.vitalSign,
             element: <VitalSignContainer />,
           },
+          {
+            path: PATH_DASHBOARD.treatment.prescriptionHistory,
+            element: <PrescriptionHistoryContainer />,
+          },
+          {
+            path: PATH_DASHBOARD.treatment.detailPrescriptionHistory,
+            element: <DetailPrescriptionHistoryContainer />,
+          },
+          {
+            path: PATH_DASHBOARD.treatment.prescription,
+            element: <PrescriptionContainer />,
+          },
         ],
       },
-      // Prescripption route
+      // Prescription route
       {
         path: PATH_DASHBOARD.prescription.root,
         children: [
-          {
-            path: PATH_DASHBOARD.prescription.list,
-            element: <Prescription />,
-          },
           {
             path: PATH_DASHBOARD.prescription.add,
             element: <div>add patient</div>,
           },
           {
-            path: PATH_DASHBOARD.prescription.detail + '/:id',
-            element: <PrescriptionDetail />,
+            path: PATH_DASHBOARD.prescription.detail,
+            element: <DetailPrescriptionHistoryContainer />,
           },
         ],
       },
@@ -107,6 +129,26 @@ const routes = [
           }
         ]
       }
+    ],
+  },
+
+  // root
+  {
+    path: PATH_HOME.root,
+    element: <HomeLayout />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+      {
+        path: PATH_HOME.prescription.root,
+        element: <PatientPrescription />,
+      },
+      {
+        path: PATH_HOME.prescription.detail,
+        element: <PrescriptionDetail />,
+      },
     ],
   },
 ];

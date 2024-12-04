@@ -6,6 +6,8 @@ const ROOT_AUTH = '/auth';
 
 const ROOT_DASHBOARD = '/dashboard';
 
+const ROOT = '';
+
 export const PATH_AUTHENTICATION = {
   root: ROOT_AUTH,
   login: path(ROOT_AUTH, '/login'),
@@ -51,8 +53,15 @@ export const PATH_DASHBOARD = {
     root: path(ROOT_DASHBOARD, '/treatment'),
     common: path(ROOT_DASHBOARD, '/treatment/common'),
     vitalSign: path(ROOT_DASHBOARD, '/treatment/:patientId/vital-sign'),
-    add: path(ROOT_DASHBOARD, '/treatment/add'),
-    edit: path(ROOT_DASHBOARD, '/treatment/edit/:id'),
+    diagnosis: path(ROOT_DASHBOARD, '/treatment/:patientId/diagnosis'),
+    investigation: path(ROOT_DASHBOARD, '/treatment/:patientId/investigation'),
+    prescriptionHistory: path(ROOT_DASHBOARD, '/treatment/:patientId/prescription-history'),
+    detailPrescriptionHistory: path(
+      ROOT_DASHBOARD,
+      '/treatment/:patientId/prescription-history/:prescriptionHistoryId'
+    ),
+    prescription: path(ROOT_DASHBOARD, '/treatment/:patientId/prescription'),
+    detailPrescription: path(ROOT_DASHBOARD, '/treatment/:patientId/prescription/:prescriptionId'),
   },
   prescription: {
     root: path(ROOT_DASHBOARD, '/prescription'),
@@ -60,4 +69,13 @@ export const PATH_DASHBOARD = {
     detail: path(ROOT_DASHBOARD, '/prescription/detail'),
     add: path(ROOT_DASHBOARD, '/prescription/add'),
   },
+};
+
+export const PATH_HOME = {
+  root: ROOT,
+  home: path(ROOT, '/home'),
+  prescription: {
+    root: path(ROOT, '/prescription'),
+    detail: path(ROOT, '/prescription/:id')
+  }
 };
