@@ -36,11 +36,9 @@ const Nav = () => {
   };
 
   const navItems = [
-    { label: 'Home', route: PATH_DASHBOARD.root },
+    { label: 'Dashboard', route: PATH_DASHBOARD.root },
     { label: 'Treatment', route: PATH_DASHBOARD.treatment.common },
     { label: 'Appointments', route: PATH_DASHBOARD.appointment.root },
-    { label: 'Schedules', route: PATH_DASHBOARD.schedules.root },
-    { label: 'Notifications', route: PATH_DASHBOARD.notification.root },
     { label: 'Patient', route: PATH_DASHBOARD.manage_patient.list },
     { label: 'Prescription', route: PATH_DASHBOARD.prescription.list },
   ];

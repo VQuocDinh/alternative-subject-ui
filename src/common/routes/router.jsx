@@ -4,6 +4,7 @@ import { PATH_AUTHENTICATION, PATH_DASHBOARD, PATH_HOME } from './path';
 import PatientPrescription from '../../page/patient-prescription';
 import HomeLayout from '../layout/HomeLayout';
 import Home from '../../page/home';
+import Dashboard from '../../page/dashboard';
 
 // HOC tạo Router
 const withRoutes = (routes) => {
@@ -34,6 +35,7 @@ const DashboardLayout = lazy(() => import('../layout/DashboardLayout'));
 
 // Treatment
 const TreatmentCommonContainer = lazy(() => import('../../treatment/index'));
+const Overview = lazy(() => import('../../treatment/overview/index'));
 const VitalSignContainer = lazy(() => import('../../treatment/vital-sign'));
 const PrescriptionHistoryContainer = lazy(() => import('../../treatment/prescription-history'));
 const DetailPrescriptionHistoryContainer = lazy(
@@ -60,6 +62,10 @@ const routes = [
     path: PATH_DASHBOARD.root,
     element: <DashboardLayout />,
     children: [
+      {
+        path: PATH_DASHBOARD.overview,
+        element: <Dashboard/>
+      },
       {
         path: PATH_DASHBOARD.manage_patient.root,
         children: [
@@ -99,6 +105,10 @@ const routes = [
           {
             path: PATH_DASHBOARD.treatment.prescription,
             element: <PrescriptionContainer />,
+          },
+          {
+            path: PATH_DASHBOARD.treatment.overview,
+            element: <Overview />,
           },
         ],
       },

@@ -85,32 +85,9 @@ const PatientTable = () => {
 
           <TableBody>
             {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
-              <PatientTableRow row={row} onDeleteRow={() => {}} onSelectRow={() => {}} />
-              // <TableRow key={row.id}>
-              //   <TableCell align="left">{row.patientId}</TableCell>
-              //   <TableCell align="left">{row.name}</TableCell>
-              //   <TableCell align="left">{row.age}</TableCell>
-              //   <TableCell align="left">{row.checkInTime}</TableCell>
-              //   <TableCell align="left">{row.status}</TableCell>
-              //   <TableCell align="left">
-              //     <TableMoreMenu>
-              //     <Tooltip title="Chuyển trạng thái">
-              //       <IconButton
-              //         color="primary"
-              //         onClick={() => {
-              //           // Handle transition of status logic
-              //           console.log(`Chuyển trạng thái cho bệnh nhân ${row.patientId}`);
-              //         }}
-              //       >
-              //         <Iconify icon="eva:arrow-ios-forward-fill" />
-              //       </IconButton>
-              //     </Tooltip>
-              //     </TableMoreMenu>
-              //   </TableCell>
-              // </TableRow>
+              <PatientTableRow row={row} onDeleteRow={() => {}} onSelectRow={() => {handleSelectRow}} />
+              
             ))}
-            {/* Pagination */}
-            {/* <TableSkeleton isLoading={isLoadingData} row={rowsPerPage} /> */}
             {data.length === 0 && <TableNoData isNotFound={true} />}
           </TableBody>
         </Table>

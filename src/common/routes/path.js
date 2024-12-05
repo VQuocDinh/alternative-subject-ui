@@ -17,6 +17,9 @@ export const PATH_AUTHENTICATION = {
 
 export const PATH_DASHBOARD = {
   root: ROOT_DASHBOARD,
+  overview : {
+    root: path(ROOT_DASHBOARD, '/overview')
+  },
   manage_patient: {
     root: path(ROOT_DASHBOARD, '/manage-patient'),
     list: path(ROOT_DASHBOARD, '/manage-patient/list'),
@@ -52,6 +55,7 @@ export const PATH_DASHBOARD = {
   treatment: {
     root: path(ROOT_DASHBOARD, '/treatment'),
     common: path(ROOT_DASHBOARD, '/treatment/common'),
+    overview: path(ROOT_DASHBOARD, '/treatment/overview/:patientId'),
     vitalSign: path(ROOT_DASHBOARD, '/treatment/:patientId/vital-sign'),
     diagnosis: path(ROOT_DASHBOARD, '/treatment/:patientId/diagnosis'),
     investigation: path(ROOT_DASHBOARD, '/treatment/:patientId/investigation'),
