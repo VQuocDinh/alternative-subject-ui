@@ -15,8 +15,8 @@ const TreatmentCommonContainer = () => {
     setError(null)
     try {
       const response = await PatientService.getAll()
-      if(response?.success) {
-        setPatientList(response.data || [])
+      if(response?.status === 200) {
+        setPatientList(response.metadata?.data || [])
       } else {
         throw new Error(response?.message || 'Failed to fetch patients')
       }

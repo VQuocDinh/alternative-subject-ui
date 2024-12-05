@@ -7,11 +7,22 @@ import { replacePathParams } from '../../../common/utils/common.utils';
 const MiniSidebar = () => {
   const params = useParams();
   const location = useLocation();
-  console.log('vital sign id in minisidebar', params.patientId);
   const navigate = useNavigate();
   return (
     <Page>
       <div className="d-flex flex-column gap-4">
+        <Button
+          onClick={() =>
+            navigate(
+              replacePathParams(PATH_DASHBOARD.treatment.overview, {
+                patientId: params?.patientId,
+              })
+            )
+          }
+          variant={location.pathname.includes('overview') ? 'primary' : 'outline-primary'}
+        >
+         Tổng quan
+        </Button>
         <Button
           onClick={() =>
             navigate(
