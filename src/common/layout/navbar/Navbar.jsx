@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import logo from '../../../assets/image/logo-no-bgr.png';
 import { useNavigate } from 'react-router-dom';
-// import { FaUserCircle } from 'react-icons/fa';
+import { FaUserCircle } from 'react-icons/fa';
 
 import './Navbar.scss';
 import { PATH_DASHBOARD } from '../../routes/path';
@@ -21,14 +21,14 @@ const Nav = () => {
     }
   }, []);
 
-  // const handleLogout = () => {
-  //   const confirmed = window.confirm('Are you sure you want to log out?');
-  //   if (confirmed) {
-  //     localStorage.removeItem('token');
-  //     setToken('');
-  //     navigate('/');
-  //   }
-  // };
+  const handleLogout = () => {
+    const confirmed = window.confirm('Are you sure you want to log out?');
+    if (confirmed) {
+      localStorage.removeItem('token');
+      setToken('');
+      navigate('/auth/login');
+    }
+  };
 
   const handleNavigation = (route, selected) => {
     navigate(route);
@@ -36,7 +36,7 @@ const Nav = () => {
   };
 
   const navItems = [
-    { label: 'Dashboard', route: PATH_DASHBOARD.root },
+    { label: 'Dashboard', route: PATH_DASHBOARD.overview.root },
     { label: 'Treatment', route: PATH_DASHBOARD.treatment.common },
     { label: 'Appointments', route: PATH_DASHBOARD.appointment.root },
     { label: 'Patient', route: PATH_DASHBOARD.manage_patient.list },
@@ -59,35 +59,32 @@ const Nav = () => {
             <span className="navbar-toggler-icon"></span>
           </button>
 
-          <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
-            <img
-              onClick={() => navigate(PATH_DASHBOARD.root)}
-              className="nav__logo me-3"
-              src={logo}
-              alt="navbar logo"
-            />
+          <div className="d-flex justify-content-between collapse navbar-collapse" id="navbarTogglerDemo01">
+            <div className='d-flex'>
+              <img
+                onClick={() => navigate(PATH_DASHBOARD.overview.root)}
+                className="nav__logo me-3"
+                src={logo}
+                alt="navbar logo"
+              />
+  
+              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                {navItems.map((item, index) => (
+                  <li className="nav-item" key={index}>
+                    <button
+                      onClick={() => handleNavigation(item.route, item.label)}
+                      className={`nav-link ${isSelected === item ? 'active' : ''}`}
+                      aria-current={isSelected === item ? 'page' : undefined}
+                      disabled={userRole === '4' && item !== 'Patients'}
+                    >
+                      {item.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              {navItems.map((item, index) => (
-                <li className="nav-item" key={index}>
-                  <button
-                    onClick={() => handleNavigation(item.route, item.label)}
-                    className={`nav-link ${isSelected === item ? 'active' : ''}`}
-                    aria-current={isSelected === item ? 'page' : undefined}
-                    disabled={userRole === '4' && item !== 'Patients'}
-                  >
-                    {item.label}
-                  </button>
-                </li>
-              ))}
-              {/* <li className="nav-item">
-                <button className="nav-link disabled" aria-disabled="true">
-                  Disabled
-                </button>
-              </li> */}
-            </ul>
-
-            {/* {!token ? (
+            {!token ? (
               <div className="login">
                 <button onClick={() => navigate('/')} className="me-3">
                   Login
@@ -106,7 +103,7 @@ const Nav = () => {
                   </li>
                 </ul>
               </div>
-            )} */}
+            )}
           </div>
         </div>
       </nav>

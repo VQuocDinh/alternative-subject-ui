@@ -7,11 +7,8 @@ import {
   Table,
   Badge,
   Button,
-  ProgressBar
 } from 'react-bootstrap';
 import {
-  BarChart,
-  Bar,
   LineChart,
   Line,
   XAxis,
@@ -24,8 +21,6 @@ import {
   Pie,
   Cell
 } from 'recharts';
-import { format } from 'date-fns';
-import vi from 'date-fns/locale/vi';
 
 const Dashboard = () => {
   // States for different metrics
