@@ -4,8 +4,7 @@ import MiniSidebar from '../common/components/MiniSidebar';
 import PatientInfo from '../common/components/PatientInfo';
 
 const Overview = (props) => {
-    const params = useParams();
-  console.log('prescription id: ', params.patientId);
+  const params = useParams();
   return (
     <div className="w-100 h-100 d-flex flex-row gap-3 ">
       <div className="" style={{ width: '20%' }}>

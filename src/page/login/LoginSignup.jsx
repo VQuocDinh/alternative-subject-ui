@@ -30,7 +30,7 @@ const LoginSignup = () => {
     localStorage.setItem('token', data.token);
     localStorage.setItem('userRole', data.roleId.toString());
     localStorage.setItem('staffId', data.userId);
-    navigate(data.roleId === 1 ? '/dashboard' : '/');
+    navigate(data.roleId === 1 ? '/dashboard/overview' : '/');
   };
 
   const handleRegisetrSuccess = (data) => {

@@ -63,7 +63,7 @@ const routes = [
     element: <DashboardLayout />,
     children: [
       {
-        path: PATH_DASHBOARD.overview,
+        path: PATH_DASHBOARD.overview.root,
         element: <Dashboard/>
       },
       {
