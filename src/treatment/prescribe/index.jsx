@@ -1,4 +1,5 @@
 import MiniSidebar from '../common/components/MiniSidebar';
+import PatientInfo from '../common/components/PatientInfo';
 import PrescriptionForm from './components/PrescriptionForm';
 
 const DoctorPrescription = () => {
@@ -8,6 +9,7 @@ const DoctorPrescription = () => {
         <MiniSidebar />
       </div>
       <div className="w-100 d-flex gap-4 flex-column" style={{ marginBottom: '100px' }}>
+        <PatientInfo />
         <PrescriptionForm />
       </div>
     </div>

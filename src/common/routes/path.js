@@ -55,6 +55,7 @@ export const PATH_DASHBOARD = {
   treatment: {
     root: path(ROOT_DASHBOARD, '/treatment'),
     common: path(ROOT_DASHBOARD, '/treatment/common'),
+    medicalRecord: path(ROOT_DASHBOARD, '/treatment/medical-record'),
     overview: path(ROOT_DASHBOARD, '/treatment/overview/:patientId'),
     vitalSign: path(ROOT_DASHBOARD, '/treatment/:patientId/vital-sign'),
     diagnosis: path(ROOT_DASHBOARD, '/treatment/:patientId/diagnosis'),
