@@ -15,11 +15,11 @@ const PatientTableRow = ({ row, onDeleteRow, onEditRow }) => {
 
   return (
     <TableRow hover>
-      <TableCell align="left">{row.patientId}</TableCell>
-      <TableCell align="left">{row.name}</TableCell>
-      <TableCell align="left">{row.age}</TableCell>
-      <TableCell align="left">{row.checkInTime}</TableCell>
-      <TableCell align="left">{row.status}</TableCell>
+      <TableCell align="left">{row.id}</TableCell>
+      <TableCell align="left">{row?.Patient?.full_name}</TableCell>
+      <TableCell align="left">{row?.Patient?.dob}</TableCell>
+      <TableCell align="left">{row?.Patient?.phone}</TableCell>
+      <TableCell align="left">{row?.status}</TableCell>
       <TableCell align="left">
         <TableMoreMenu
           open={openMenu}
@@ -39,7 +39,7 @@ const PatientTableRow = ({ row, onDeleteRow, onEditRow }) => {
               </MenuItem>
               <MenuItem
                 onClick={() => {
-                  onEditRow();
+                  onEditRow({ recordId: row?.id, patientId: row?.Patient?.id });
                   handleCloseMenu();
                 }}
               >
