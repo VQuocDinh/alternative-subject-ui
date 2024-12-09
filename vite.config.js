@@ -37,8 +37,8 @@ export default defineConfig({
   // Cấu hình alias
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'),
-      '@App': path.resolve(__dirname, 'src')
+      '@': path.resolve(__dirname, './src'),
+      '@App': path.resolve(__dirname, './src'),
     },
   },
 })
