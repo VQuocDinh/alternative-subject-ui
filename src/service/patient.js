@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { API_URL } from '../treatment/common/constant';
+import { API_URL } from '@App/treatment/common/constant';
 
 const PatientService = {
   getAll: async () => {

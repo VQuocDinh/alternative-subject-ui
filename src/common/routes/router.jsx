@@ -4,6 +4,7 @@ import { PATH_AUTHENTICATION, PATH_DASHBOARD, PATH_HOME } from './path';
 import PatientPrescription from '../../page/patient-prescription';
 import HomeLayout from '../layout/HomeLayout';
 import Home from '../../page/home';
+import Dashboard from '../../page/dashboard';
 
 // HOC tạo Router
 const withRoutes = (routes) => {
@@ -13,28 +14,35 @@ const withRoutes = (routes) => {
     return <Suspense fallback={<div>Loading...</div>}>{routing}</Suspense>;
   };
 };
+const DoctorAvailability = lazy(() => import('../../appointment/da'));
+
 const AppoimentAdd = lazy(() => import('../../appointment/add'));
 // Lazy loaded components
 const LoginSignUp = lazy(() => import('../../page/login/LoginSignup'));
 
 // Management patient
 const ListPatient = lazy(() => import('../../manage-patient/list'));
+const AddPatient = lazy(() => import('../../manage-patient/add-patient'));
 
 // Prescription
 // const Prescription = lazy(() => import('../../page/prescription'));
-const PrescriptionDetail = lazy(() => import('../../page/patient-prescription/prescription-detail'));
+const PrescriptionDetail = lazy(
+  () => import('../../page/patient-prescription/prescription-detail')
+);
 
 // Layout
 const DashboardLayout = lazy(() => import('../layout/DashboardLayout'));
 
 // Treatment
 const TreatmentCommonContainer = lazy(() => import('../../treatment/index'));
+const MedicalRecord = lazy(() => import('../../treatment/medical-record'));
+const Overview = lazy(() => import('../../treatment/overview/index'));
 const VitalSignContainer = lazy(() => import('../../treatment/vital-sign'));
-const PrescriptionHistoryContainer = lazy(() => import('../../treatment/prescription-history'));
+const PrescriptionHistoryContainer = lazy(() => import('../../treatment/prescription'));
 const DetailPrescriptionHistoryContainer = lazy(
-  () => import('../../treatment/detail-prescription-history')
+  () => import('../../treatment/detail-prescription')
 );
-const PrescriptionContainer = lazy(() => import('../../treatment/doctor-prescription'));
+const PrescriptionContainer = lazy(() => import('../../treatment/prescribe'));
 
 const routes = [
   // auth
@@ -56,6 +64,10 @@ const routes = [
     element: <DashboardLayout />,
     children: [
       {
+        path: PATH_DASHBOARD.overview.root,
+        element: <Dashboard/>
+      },
+      {
         path: PATH_DASHBOARD.manage_patient.root,
         children: [
           {
@@ -64,7 +76,7 @@ const routes = [
           },
           {
             path: PATH_DASHBOARD.manage_patient.add,
-            element: <div>add patient</div>,
+            element: <AddPatient />,
           },
           {
             path: PATH_DASHBOARD.manage_patient.edit + '/:id',
@@ -78,6 +90,10 @@ const routes = [
           {
             path: PATH_DASHBOARD.treatment.common,
             element: <TreatmentCommonContainer />,
+          },
+          {
+            path: PATH_DASHBOARD.treatment.medicalRecord,
+            element: <MedicalRecord />,
           },
           {
             path: PATH_DASHBOARD.treatment.vitalSign,
@@ -94,6 +110,10 @@ const routes = [
           {
             path: PATH_DASHBOARD.treatment.prescription,
             element: <PrescriptionContainer />,
+          },
+          {
+            path: PATH_DASHBOARD.treatment.overview,
+            element: <Overview />,
           },
         ],
       },
@@ -117,6 +137,10 @@ const routes = [
           {
             path: PATH_DASHBOARD.appointment.add,
             element: <AppoimentAdd />,
+          },
+          {
+            path: PATH_DASHBOARD.appointment.da,
+            element: <DoctorAvailability />,
           }
         ]
       }

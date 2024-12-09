@@ -2,8 +2,13 @@ import { MenuItem, TableCell, TableRow } from '@mui/material';
 import { useState } from 'react';
 import TableMoreMenu from '../../../common/components/mui-table/TableMoreMenu';
 import Iconify from '../../../common/components/Iconify';
+import { useNavigate, useParams } from 'react-router-dom';
+import { PATH_DASHBOARD } from '../../../common/routes/path';
+import { replacePathParams } from '../../../common/utils/common.utils';
 
 const PatientTableRow = ({ row, onDeleteRow, onEditRow }) => {
+  const navigate = useNavigate()
+  const params = useParams();
   const [openMenu, setOpenMenuActions] = useState(null);
   const handleOpenMenu = (event) => {
     setOpenMenuActions(event.currentTarget);
@@ -45,6 +50,18 @@ const PatientTableRow = ({ row, onDeleteRow, onEditRow }) => {
               >
                 <Iconify icon={'eva:edit-fill'} />
                 Sửa
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  navigate(
+                    replacePathParams(PATH_DASHBOARD.treatment.overview, {
+                      patientId: row?.patientId,
+                    })
+                  )
+                }}
+              >
+                <Iconify icon={'eva:edit-fill'} />
+                Thông tin khám bệnh
               </MenuItem>
             </>
           }

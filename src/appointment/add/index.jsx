@@ -1,76 +1,243 @@
 import Page from '../../common/components/Page';
 import '../add/index.css';
+import axios from 'axios';
+const baseUrl = import.meta.env.VITE_BASE_URL || "http://localhost:8080";
 import FormProvider from '../../common/components/hook-form/FormProvider';
 import RHFTextField from '../../common/components/hook-form/RHFTextField';
 import RHFSelect from '../../common/components/hook-form/RHFSelect';
-
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
 import { Button, Row, Col } from 'react-bootstrap';
-import { useForm } from 'react-hook-form';
-import { FormControlLabel, MenuItem, Radio, RadioGroup, TextField } from '@mui/material';
+import { useForm, Controller } from 'react-hook-form';
+import {
+  Box,
+  FormControlLabel,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  Stack,
+  TextField,
+} from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs'; // Import Day.js
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import TimeItem from './components/TimeItem';
+import { toast } from 'react-toastify';
+
+function generateTimeSlots() {
+  const times = [];
+
+  const addTimeSlots = (startHour, startMinute, endHour, endMinute) => {
+    let start = startHour * 60 + startMinute; // Chuyển giờ bắt đầu sang phút
+    const end = endHour * 60 + endMinute; // Chuyển giờ kết thúc sang phút
+
+    while (start <= end) {
+      const hours = Math.floor(start / 60);
+      const minutes = start % 60;
+      const timeString = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+      times.push(timeString);
+      start += 30; // Tăng thêm 30 phút
+    }
+  };
+
+  addTimeSlots(7, 30, 10, 30);
+  addTimeSlots(13, 0, 16, 30);
+
+  return times;
+}
 
 const AppointmentAdd = () => {
+
   const currentYear = new Date().getFullYear();
 
-  const methods = useForm();
-  const handleSubmit = () => {};
+  const times = generateTimeSlots();
+
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
+
+  const validationSchema = Yup.object().shape({
+    hoten: Yup.string().required('Vui lòng nhập họ và tên'),
+    email: Yup.string().email('Email không hợp lệ').required('Vui lòng nhập email'),
+    phone: Yup.string()
+      .matches(/^[0-9]+$/, 'Số điện thoại chỉ được chứa số')
+      .min(10, 'Số điện thoại phải có ít nhất 10 số')
+      .required('Vui lòng nhập số điện thoại'),
+    location: Yup.string().required('Vui lòng nhập địa chỉ'),
+    phongkham: Yup.string().required('Vui lòng chọn phòng khám'),
+    bacsi: Yup.string().required('Vui lòng chọn bác sĩ'),
+    chuyenkhoa: Yup.string().required('Vui lòng chọn chuyên khoa'),
+    date: Yup.date().required('Vui lòng chọn ngày hẹn'),
+    time: Yup.string().required('Vui lòng chọn giờ hẹn'),
+  });
+
+  const methods = useForm({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      hoten: '',
+      email: '',
+      phone: '',
+      location: '',
+      phongkham: '',
+      bacsi: '',
+      chuyenkhoa: '',
+      date: null,
+      time: null,
+    },
+  });
+
+  const {
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setValue,
+    watch,
+  } = methods;
+
+  const onSubmit = async (data) => {
+    try {
+      console.log('Form data:', data);
+      // await savePatient(data);
+      // toast.success('Thêm bệnh nhân thành công');
+      // navigate('/patients');
+    } catch (error) {
+      console.error('Error saving patient:', error);
+      toast.error('Có lỗi xảy ra khi lưu thông tin');
+    }
+  };
 
   // Use Day.js for date management
   const [selectedDate, setSelectedDate] = useState(dayjs());
 
+  const [specializations, setSpecializations] = useState([]);
+  const [staffList, setStaffList] = useState([]);
+
+  const selectedSpecialization = watch('chuyenkhoa');
+  const selectedDoctor = watch('bacsi');
+
+  useEffect(() => {
+    if (!selectedSpecialization) {
+      setStaffList([]);
+      setValue('bacsi', '');
+      return;
+    }
+
+    const fetchDoctors = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/api/doctor/getDoctorBySpecialization`, {
+          params: { specialization_id: selectedSpecialization },
+        });
+        setStaffList(response.data.metadata);
+      } catch (error) {
+        console.error('Failed to fetch doctors:', error);
+      }
+    };
+
+    fetchDoctors();
+  }, [selectedSpecialization, setValue]);
+
+  useEffect(() => {
+    const fetchSpecializations = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/api/specialization/get`);
+        setSpecializations(response.data.metadata); 
+      } catch (error) {
+        console.error('Failed to fetch specializations:', error);
+      }
+    };
+
+    fetchSpecializations();
+  }, []);
+
+  // Thêm hàm xử lý khi chọn time slot
+  const handleTimeSlotSelect = (value) => {
+    setSelectedTimeSlot(value);
+    // Cập nhật giá trị vào form
+    setValue('time', value, { shouldValidate: true });
+  };
+
   return (
     <Page>
       <div className="p-2">
-        <FormProvider onSubmit={handleSubmit} methods={methods}>
+        <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
           <h3 className="mb-4 fw-bold">Đăng ký lịch hẹn khám</h3>
-
           <Row className="mb-3">
             <h4 className="mb-4 fw-bold"> Chọn</h4>
             <Col md={4}>
-              <RHFSelect name="phongkham" label={'Phòng khám'} SelectProps={{ native: false }}>
-                <MenuItem value="1">Cơ sở 1</MenuItem>
-                <MenuItem value="2">Cơ sở 2</MenuItem>
-                <MenuItem value="3">Cơ sở 3</MenuItem>
-                <MenuItem value="4">Cơ sở 4</MenuItem>
-              </RHFSelect>
+              <Stack gap={5}>
+                <RHFSelect name="phongkham" label={'Phòng khám'} SelectProps={{ native: false }}>
+                  <MenuItem value="1">Cơ sở 1</MenuItem>
+                  <MenuItem value="2">Cơ sở 2</MenuItem>
+                  <MenuItem value="3">Cơ sở 3</MenuItem>
+                  <MenuItem value="4">Cơ sở 4</MenuItem>
+                </RHFSelect>
+                <RHFSelect
+                  name="chuyenkhoa"
+                  label="Chuyên khoa"
+                  SelectProps={{ native: false }}
+                >
+                  {specializations?.map((item) => (
+                    <MenuItem key={item.id} value={item.id}>
+                      {item.specialization_name}
+                    </MenuItem>
+                  ))}
+                </RHFSelect>
+                <RHFSelect
+                  name="bacsi"
+                  label="Bác sĩ"
+                  SelectProps={{ native: false }}
+                >
+                  {staffList?.length === 0 ? (
+                    <MenuItem value="" disabled>
+                      {selectedSpecialization ? 'Không có bác sĩ cho chuyên khoa này' : 'Vui lòng chọn chuyên khoa'}
+                    </MenuItem>
+                  ) : (
+                    staffList?.map((staff) => (
+                      <MenuItem key={staff.id} value={staff.id}>
+                        {staff.first_name} {staff.last_name}
+                      </MenuItem>
+                    ))
+                  )}
+                </RHFSelect>
+              </Stack>
             </Col>
-            <Col md={4}>
-              <RHFSelect name="chuyenkhoa" label={'Chuyên khoa'} SelectProps={{ native: false }}>
-                <MenuItem value="1">CK1</MenuItem>
-                <MenuItem value="2">CK2</MenuItem>
-                <MenuItem value="3">Tai mũi họng</MenuItem>
-                <MenuItem value="4">Răng hàm mặt</MenuItem>
-              </RHFSelect>
-            </Col>
-            <Col md={4}>
-              <RHFSelect name="bacsi" label={'Bác sĩ'} SelectProps={{ native: false }}>
-                <MenuItem value="1">Quoc Dinh</MenuItem>
-                <MenuItem value="2">Dinh</MenuItem>
-                <MenuItem value="3">Dinh Tien</MenuItem>
-                <MenuItem value="4">Tien</MenuItem>
-              </RHFSelect>
-            </Col>
-          </Row>
-
-          <Row className="mb-3">
-            <h4 className="mb-4 fw-bold"> Chọn lịch khám</h4>
-            <Col>
-              {/* Add LocalizationProvider around the DateTimePicker */}
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DateTimePicker
-                  label="Chọn lịch"
-                  value={selectedDate}
-                  onChange={(newValue) => setSelectedDate(newValue)}
-                  maxDate={dayjs(`${currentYear}-12-31`)}
-                  openTo="year"
-                  views={['year', 'month', 'day']}
-                  sx={{ minWidth: 250 }}
+            <Col md={6}>
+              <Stack gap={5}  mb={'20px'}>
+                <Controller
+                  name="date"
+                  control={methods.control}
+                  render={({ field }) => (
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DateTimePicker
+                        {...field}
+                        label="Chọn ngày"
+                        minDate={dayjs()}
+                        maxDate={dayjs(`${currentYear}-12-31`)}
+                        openTo="year"
+                        views={['year', 'month', 'day']}
+                        sx={{ 
+                          width: '400px'
+                        }}
+                        onChange={(newValue) => {
+                          field.onChange(newValue);
+                          setSelectedDate(newValue);
+                        }}
+                      />
+                    </LocalizationProvider>
+                  )}
                 />
-              </LocalizationProvider>
+                {errors.date && <div className="text-danger">{errors.date.message}</div>}
+
+              </Stack >
+              <Stack direction={'row'} gap={'15px'} flexWrap={'wrap'}>
+                {times.map((value) => {
+                  return (
+                    <Box key={value} onClick={() => handleTimeSlotSelect(value)}>
+                      <TimeItem isActive={selectedTimeSlot === value} value={value} />
+                    </Box>
+                  );
+                })}
+                {errors.time && <div className="text-danger">{errors.time.message}</div>}
+              </Stack>
             </Col>
           </Row>
 
@@ -78,10 +245,12 @@ const AppointmentAdd = () => {
             <h4 className="mb-4 fw-bold"> Thông tin cá nhân</h4>
             <Col md={6}>
               <RHFTextField name="hoten" label={'Họ và tên'} />
+              {errors.hoten && <span className="text-danger"></span>}
             </Col>
 
             <Col md={6}>
               <RHFTextField name="email" label={'Email'} />
+              {errors.email && <span className="text-danger"></span>}
             </Col>
             <RadioGroup
               row
@@ -97,9 +266,11 @@ const AppointmentAdd = () => {
           <Row className="mb-5">
             <Col md={6}>
               <RHFTextField name="phone" label={'Số điện thoại'} />
+              {errors.phone && <span className="text-danger"></span>}
             </Col>
             <Col md={6}>
               <RHFTextField name="location" label={'Địa chỉ'} />
+              {errors.location && <span className="text-danger"></span>}
             </Col>
           </Row>
 
@@ -117,7 +288,7 @@ const AppointmentAdd = () => {
           </Row>
           <Row className="justify-content-center mb-5">
             <Col md={6} className="text-center">
-              <Button type="submit" variant="primary">
+              <Button type="submit" disabled={isSubmitting} variant="primary">
                 Gửi thông tin
               </Button>
             </Col>
