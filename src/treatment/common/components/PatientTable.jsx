@@ -52,9 +52,11 @@ const PatientTable = ({ patients, isLoading, isError }) => {
           <TableHeadCustom headLabel={HEAD_TABLE_PROPS} rowCount={patientList?.length} />
 
           <TableBody>
-            {patientList?.map((row) => (
+            {patientList?.map((row, index) => (
               <PatientTableRow
+                key={row?.id}
                 row={row}
+                index={index}
                 onEditRow={handleOnEditRow}
                 onDeleteRow={() => {}}
                 onSelectRow={() => {}}

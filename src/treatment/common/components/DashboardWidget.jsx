@@ -9,18 +9,10 @@ import {
   FaFileInvoiceDollar,
   FaCheck,
 } from 'react-icons/fa';
+import axiosInstance from '@/common/utils/axios';
+import { API_MEDICAL_RECORDS_STATUSES_COUNT } from '@/common/constant/common.constant';
 
 const DashboardWidgets = () => {
-  // Mock data
-  const mockData = {
-    registeredPatients: 35,
-    nursesHandling: 10,
-    doctorsHandling: 15,
-    patientsWaitingForTests: 12,
-    patientsBilling: 8,
-    completedPatients: 20,
-  };
-
   const [data, setData] = useState({
     registeredPatients: 0,
     nursesHandling: 0,
@@ -32,8 +24,20 @@ const DashboardWidgets = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Giả lập độ trễ API
-      setData(mockData);
+      try {
+        const response = await axiosInstance.get(API_MEDICAL_RECORDS_STATUSES_COUNT);
+        const { metadata } = response.data;
+        setData({
+          registeredPatients: 3,
+          nursesHandling: metadata.nurse_received || 0,
+          doctorsHandling: metadata.doctor_received || 0,
+          patientsWaitingForTests: metadata.waiting_lab || 0,
+          patientsBilling: 0,
+          completedPatients: 0,
+        });
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     };
     fetchData();
   }, []);

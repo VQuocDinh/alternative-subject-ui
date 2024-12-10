@@ -34,7 +34,7 @@ const TreatmentCommonContainer = () => {
   }, []);
 
   return (
-    <div className="w-100 d-flex flex-column gap-4" style={{ marginBottom: '100px' }}>
+    <div className="w-75 d-flex flex-column gap-4 mx-auto" style={{ marginBottom: '100px' }}>
       <Page>
         <DashboardWidgets />
       </Page>

@@ -30,6 +30,7 @@ export default function TableMoreMenu({ actions, open, onClose, onOpen }) {
         sx={{
           mt: -1,
           minWidth: 160,
+          width: 300,
           '& .MuiMenuItem-root': {
             px: 1,
             typography: 'body2',
