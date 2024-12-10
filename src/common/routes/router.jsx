@@ -5,13 +5,20 @@ import PatientPrescription from '../../page/patient-prescription';
 import HomeLayout from '../layout/HomeLayout';
 import Home from '../../page/home';
 import Dashboard from '../../page/dashboard';
+import './spinner.css'; // Import the CSS file for the spinner
+
+const Spinner = () => (
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+    <div className="spinner"></div>
+  </div>
+);
 
 // HOC tạo Router
 const withRoutes = (routes) => {
   return function RouterComponent() {
     const routing = useRoutes(routes);
 
-    return <Suspense fallback={<div>Loading...</div>}>{routing}</Suspense>;
+    return <Suspense fallback={<Spinner />}>{routing}</Suspense>;
   };
 };
 const DoctorAvailability = lazy(() => import('../../appointment/da'));
@@ -65,7 +72,7 @@ const routes = [
     children: [
       {
         path: PATH_DASHBOARD.overview.root,
-        element: <Dashboard/>
+        element: <Dashboard />,
       },
       {
         path: PATH_DASHBOARD.manage_patient.root,
@@ -141,9 +148,9 @@ const routes = [
           {
             path: PATH_DASHBOARD.appointment.da,
             element: <DoctorAvailability />,
-          }
-        ]
-      }
+          },
+        ],
+      },
     ],
   },
 
