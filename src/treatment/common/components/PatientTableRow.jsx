@@ -10,8 +10,11 @@ import {
   calculateAge,
   translateStatus,
 } from '../../../common/utils/common.utils';
+import { useDispatch } from '@/common/redux/store';
+import { setCurrentMedicalRecordId, setPatientId } from '../treatment.slice';
 
 const PatientTableRow = ({ row, index, onDeleteRow, onEditRow }) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [openMenu, setOpenMenuActions] = useState(null);
   const handleOpenMenu = (event) => {
@@ -56,6 +59,8 @@ const PatientTableRow = ({ row, index, onDeleteRow, onEditRow }) => {
               </MenuItem>
               <MenuItem
                 onClick={() => {
+                  dispatch(setPatientId(row?.Patient?.id));
+                  dispatch(setCurrentMedicalRecordId(row?.id));
                   navigate(
                     replacePathParams(PATH_DASHBOARD.treatment.overview, {
                       patientId: row?.Patient?.id,

@@ -33,11 +33,6 @@ const MiniSidebar = () => {
         path: PATH_DASHBOARD.treatment.investigation,
         includes: 'investigation',
       },
-      // {
-      //   label: 'Lịch sử thuốc',
-      //   path: PATH_DASHBOARD.treatment.prescriptionHistory,
-      //   includes: 'prescription-history',
-      // },
       {
         label: 'Kê đơn thuốc',
         path: PATH_DASHBOARD.treatment.prescription,
