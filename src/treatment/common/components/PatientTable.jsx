@@ -42,7 +42,12 @@ const PatientTable = ({ patients, isLoading, isError }) => {
   };
 
   const handleOnEditRow = ({ patientId, recordId }) => {
-    navigate(replacePathParams(PATH_DASHBOARD.treatment.vitalSign, { patientId }));
+    navigate(
+      replacePathParams(PATH_DASHBOARD.treatment.vitalSign, {
+        patientId,
+        medicalRecordId: recordId,
+      })
+    );
   };
 
   return (

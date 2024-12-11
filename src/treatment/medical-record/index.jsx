@@ -5,9 +5,10 @@ import MedicalRecordTable from './components/medicalRecordTable';
 import { useEffect, useState } from 'react';
 import axiosInstance from '@/common/utils/axios';
 import { API_TREATMENT_RECORD_BY_PATIENT } from '@/common/constant/common.constant';
+import { useParams } from 'react-router-dom';
 
 const MedicalRecord = () => {
-  const { patientId } = useSelector((state) => state.treatment);
+  const params = useParams();
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -16,7 +17,9 @@ const MedicalRecord = () => {
     setIsLoading(true);
     setIsError(false);
     try {
-      const response = await axiosInstance.get(`${API_TREATMENT_RECORD_BY_PATIENT}/${patientId}`);
+      const response = await axiosInstance.get(
+        `${API_TREATMENT_RECORD_BY_PATIENT}/${params?.patientId}`
+      );
       const records = response.data.metadata;
       setData(
         records?.data?.map((record) => ({
@@ -36,7 +39,7 @@ const MedicalRecord = () => {
   };
 
   useEffect(() => {
-    if (patientId) {
+    if (params?.patientId) {
       getMedicalRecords();
     }
   }, []);

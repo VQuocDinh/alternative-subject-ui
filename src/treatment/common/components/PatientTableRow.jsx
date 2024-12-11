@@ -65,6 +65,7 @@ const PatientTableRow = (props) => {
                   navigate(
                     replacePathParams(PATH_DASHBOARD.treatment.overview, {
                       patientId: row?.Patient?.id,
+                      medicalRecordId: row?.id,
                     })
                   );
                   handleCloseMenu();

@@ -55,17 +55,23 @@ export const PATH_DASHBOARD = {
   treatment: {
     root: path(ROOT_DASHBOARD, '/treatment'),
     common: path(ROOT_DASHBOARD, '/treatment/common'),
-    medicalRecord: path(ROOT_DASHBOARD, '/treatment/:patientId/medical-record'),
-    overview: path(ROOT_DASHBOARD, '/treatment/:patientId/overview'),
-    vitalSign: path(ROOT_DASHBOARD, '/treatment/:patientId/vital-sign'),
-    diagnosis: path(ROOT_DASHBOARD, '/treatment/:patientId/diagnosis'),
-    investigation: path(ROOT_DASHBOARD, '/treatment/:patientId/investigation'),
-    prescriptionHistory: path(ROOT_DASHBOARD, '/treatment/:patientId/prescription-history'),
+    medicalRecord: path(
+      ROOT_DASHBOARD,
+      '/treatment/:patientId/:medicalRecordId/medical-record/all'
+    ),
+    overview: path(ROOT_DASHBOARD, '/treatment/:patientId/:medicalRecordId/overview'),
+    vitalSign: path(ROOT_DASHBOARD, '/treatment/:patientId/:medicalRecordId/vital-sign'),
+    diagnosis: path(ROOT_DASHBOARD, '/treatment/:patientId/:medicalRecordId/diagnosis'),
+    investigation: path(ROOT_DASHBOARD, '/treatment/:patientId/:medicalRecordId/investigation'),
+    prescriptionHistory: path(
+      ROOT_DASHBOARD,
+      '/treatment/:patientId/:medicalRecordId/prescription-history'
+    ),
     detailPrescriptionHistory: path(
       ROOT_DASHBOARD,
-      '/treatment/:patientId/prescription-history/:prescriptionHistoryId'
+      '/treatment/:patientId/:medicalRecordId/prescription-history/:prescriptionHistoryId'
     ),
-    prescription: path(ROOT_DASHBOARD, '/treatment/:patientId/prescription'),
+    prescription: path(ROOT_DASHBOARD, '/treatment/:patientId/:medicalRecordId/prescription'),
     detailPrescription: path(ROOT_DASHBOARD, '/treatment/:patientId/prescription/:prescriptionId'),
   },
   prescription: {

@@ -14,7 +14,7 @@ const MiniSidebar = () => {
     () => [
       { label: 'Tổng quan', path: PATH_DASHBOARD.treatment.overview, includes: 'overview' },
       {
-        label: 'Bệnh án',
+        label: 'Lịch sử khám bệnh',
         path: PATH_DASHBOARD.treatment.medicalRecord,
         includes: 'medical-record',
       },
@@ -44,9 +44,14 @@ const MiniSidebar = () => {
 
   const handleNavigation = useCallback(
     (path) => {
-      navigate(replacePathParams(path, { patientId: params?.patientId }));
+      navigate(
+        replacePathParams(path, {
+          patientId: params?.patientId,
+          medicalRecordId: params?.medicalRecordId,
+        })
+      );
     },
-    [navigate, params?.patientId]
+    [navigate, params?.medicalRecordId, params?.patientId]
   );
 
   const renderButton = useCallback(
