@@ -1,3 +1,4 @@
+import { format, isValid } from 'date-fns';
 import { MEDICAL_RECORD_STATUS } from '../constant/treatment.constant';
 
 export function replacePathParams(path, newData) {
@@ -59,4 +60,20 @@ export const calculateAge = (dob) => {
     age--;
   }
   return age;
+};
+
+export const formatDate = (dateTime) => {
+  const date = new Date(dateTime);
+  if (!isValid(date)) {
+    return 'Invalid date';
+  }
+  return format(date, 'yyyy-MM-dd');
+};
+
+export const formatDateTime = (dateTime) => {
+  const date = new Date(dateTime);
+  if (!isValid(date)) {
+    return 'Invalid date';
+  }
+  return format(date, 'yyyy-MM-dd HH:mm:ss');
 };
