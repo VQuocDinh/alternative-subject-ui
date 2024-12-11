@@ -9,6 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import axiosInstance from '@/common/utils/axios';
 import { API_TREATMENT_RECORD } from '@/common/constant/common.constant';
 import { useSelector } from '@/common/redux/store';
+import useToast from '@/common/hooks/useToast';
 
 // Define Yup schema
 const validationSchema = yup.object().shape({
@@ -47,6 +48,8 @@ const VitalSignForm = () => {
   const weight = watch('weight');
   const height = watch('height');
 
+  const { showToast, Toast } = useToast();
+
   useEffect(() => {
     const bmi = calculateBMI(weight, height);
     setValue('bmi', parseInt(bmi));
@@ -67,8 +70,10 @@ const VitalSignForm = () => {
           note: data?.note,
         }
       );
+      showToast('success', 'Submitted successfully!');
       console.log('Submitted Data:', response.data);
     } catch (error) {
+      showToast('error', 'Error submitting data!');
       console.error('Error submitting data:', error);
     }
   };
@@ -146,6 +151,7 @@ const VitalSignForm = () => {
             </Button>
           </div>
         </FormProvider>
+        <Toast />
       </div>
     </Page>
   );
