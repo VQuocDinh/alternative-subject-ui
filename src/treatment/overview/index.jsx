@@ -1,4 +1,3 @@
-import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Grid, Paper, Typography, Box } from '@mui/material';
 import MiniSidebar from '../common/components/MiniSidebar';

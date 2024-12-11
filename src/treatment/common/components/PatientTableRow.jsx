@@ -1,4 +1,4 @@
-import { MenuItem, TableCell, TableRow, Badge, Box, Chip } from '@mui/material';
+import { MenuItem, TableCell, TableRow, Box, Chip } from '@mui/material';
 import { useState } from 'react';
 import TableMoreMenu from '../../../common/components/mui-table/TableMoreMenu';
 import Iconify from '../../../common/components/Iconify';
@@ -13,7 +13,8 @@ import {
 import { useDispatch } from '@/common/redux/store';
 import { setCurrentMedicalRecordId, setPatientId } from '../treatment.slice';
 
-const PatientTableRow = ({ row, index, onDeleteRow, onEditRow }) => {
+const PatientTableRow = (props) => {
+  const { row, index, onDeleteRow, onEditRow } = props;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [openMenu, setOpenMenuActions] = useState(null);
