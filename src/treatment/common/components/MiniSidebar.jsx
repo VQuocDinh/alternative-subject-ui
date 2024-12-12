@@ -23,14 +23,14 @@ const MiniSidebar = () => {
         path: PATH_DASHBOARD.treatment.vitalSign,
         includes: 'vital-sign',
       },
-      {
-        label: 'Triệu chứng & khám tổng quan',
-        path: PATH_DASHBOARD.treatment.diagnosis,
-        includes: 'diagnosis',
-      },
+      // {
+      //   label: 'Triệu chứng & khám tổng quan',
+      //   path: PATH_DASHBOARD.treatment.diagnosis,
+      //   includes: 'diagnosis',
+      // },
       {
         label: 'Chuẩn đoán bệnh',
-        path: PATH_DASHBOARD.treatment.investigation,
+        path: PATH_DASHBOARD.treatment.diagnosis,
         includes: 'investigation',
       },
       {

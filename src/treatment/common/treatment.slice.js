@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   currentMedicalRecordId: null,
   patientId: null,
+  countFetchVitalSign: 0,
 };
 
 const treatmentSlice = createSlice({
@@ -15,6 +16,9 @@ const treatmentSlice = createSlice({
     setPatientId(state, action) {
       state.patientId = action.payload;
     },
+    setCountFetchVitalSign(state) {
+      state.countFetchVitalSign = state.countFetchVitalSign + 1;
+    },
     clearTreatmentData(state) {
       state.currentMedicalRecordId = null;
       state.patientId = null;
@@ -22,7 +26,11 @@ const treatmentSlice = createSlice({
   },
 });
 
-export const { setCurrentMedicalRecordId, setPatientId, clearTreatmentData } =
-  treatmentSlice.actions;
+export const {
+  setCurrentMedicalRecordId,
+  setPatientId,
+  clearTreatmentData,
+  setCountFetchVitalSign,
+} = treatmentSlice.actions;
 
 export default treatmentSlice.reducer;

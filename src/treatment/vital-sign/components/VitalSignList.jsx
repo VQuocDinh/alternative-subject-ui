@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import {
   Table,
   TableBody,
@@ -17,6 +16,8 @@ import axiosInstance from '@/common/utils/axios';
 import { API_TREATMENT_RECORD } from '@/common/constant/common.constant';
 import { formatDateTime } from '@/common/utils/common.utils'; // Import the formatDate function
 import Page from '@/common/components/Page';
+import { useParams } from 'react-router-dom';
+import { useSelector } from '@/common/redux/store';
 
 const HEAD_TABLE_PROPS = [
   { id: 'index', label: 'STT', align: 'center' },
@@ -31,7 +32,9 @@ const HEAD_TABLE_PROPS = [
   { id: 'note', label: 'Ghi chú', align: 'center' },
 ];
 
-const VitalSignList = ({ patientId }) => {
+const VitalSignList = () => {
+  const params = useParams();
+  const countFetchVitalSign = useSelector((state) => state.treatment.countFetchVitalSign);
   const [vitalSigns, setVitalSigns] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
@@ -42,7 +45,9 @@ const VitalSignList = ({ patientId }) => {
   useEffect(() => {
     const fetchVitalSigns = async () => {
       try {
-        const response = await axiosInstance.get(`${API_TREATMENT_RECORD}/3/vital-signs`);
+        const response = await axiosInstance.get(
+          `${API_TREATMENT_RECORD}/${params?.medicalRecordId}/vital-signs`
+        );
         const mappedVitalSigns = response.data.metadata.map((item) => ({
           id: item.id,
           date: formatDateTime(item.create_at), // Apply formatDate function
@@ -64,7 +69,7 @@ const VitalSignList = ({ patientId }) => {
     };
 
     fetchVitalSigns();
-  }, [patientId]);
+  }, [countFetchVitalSign, params?.medicalRecordId]);
 
   const vitalSignList = vitalSigns || [];
 

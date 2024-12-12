@@ -8,8 +8,10 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import axiosInstance from '@/common/utils/axios';
 import { API_TREATMENT_RECORD } from '@/common/constant/common.constant';
-import { useSelector } from '@/common/redux/store';
+import { useDispatch } from '@/common/redux/store';
 import useToast from '@/common/hooks/useToast';
+import { useParams } from 'react-router-dom';
+import { setCountFetchVitalSign } from '@/treatment/common/treatment.slice';
 
 // Define Yup schema
 const validationSchema = yup.object().shape({
@@ -29,6 +31,8 @@ const calculateBMI = (weight, height) => {
 };
 
 const VitalSignForm = () => {
+  const params = useParams();
+  const dispatch = useDispatch();
   const methods = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
@@ -42,8 +46,7 @@ const VitalSignForm = () => {
       note: '',
     },
   });
-  const currentMedicalRecordId = useSelector((state) => state.treatment.currentMedicalRecordId);
-  const { handleSubmit, watch, setValue, register } = methods;
+  const { handleSubmit, watch, setValue, register, reset } = methods;
 
   const weight = watch('weight');
   const height = watch('height');
@@ -58,7 +61,7 @@ const VitalSignForm = () => {
   const onSubmit = async (data) => {
     try {
       const response = await axiosInstance.post(
-        `${API_TREATMENT_RECORD}/${currentMedicalRecordId}/vital-signs`,
+        `${API_TREATMENT_RECORD}/${params?.medicalRecordId}/vital-signs`,
         {
           weight: data?.weight,
           height: data?.height,
@@ -70,7 +73,9 @@ const VitalSignForm = () => {
           note: data?.note,
         }
       );
+      dispatch(setCountFetchVitalSign());
       showToast('success', 'Submitted successfully!');
+      reset();
       console.log('Submitted Data:', response.data);
     } catch (error) {
       showToast('error', 'Error submitting data!');

@@ -50,6 +50,7 @@ const DetailPrescriptionHistoryContainer = lazy(
   () => import('../../treatment/detail-prescription')
 );
 const PrescriptionContainer = lazy(() => import('../../treatment/prescribe'));
+const DiagnosisContainer = lazy(() => import('../../treatment/diagnosis'));
 
 const routes = [
   // auth
@@ -121,6 +122,10 @@ const routes = [
           {
             path: PATH_DASHBOARD.treatment.overview,
             element: <Overview />,
+          },
+          {
+            path: PATH_DASHBOARD.treatment.diagnosis,
+            element: <DiagnosisContainer />,
           },
         ],
       },
