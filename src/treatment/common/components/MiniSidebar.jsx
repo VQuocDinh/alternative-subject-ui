@@ -14,7 +14,7 @@ const MiniSidebar = () => {
     () => [
       { label: 'Tổng quan', path: PATH_DASHBOARD.treatment.overview, includes: 'overview' },
       {
-        label: 'Bệnh án',
+        label: 'Lịch sử khám bệnh',
         path: PATH_DASHBOARD.treatment.medicalRecord,
         includes: 'medical-record',
       },
@@ -23,21 +23,16 @@ const MiniSidebar = () => {
         path: PATH_DASHBOARD.treatment.vitalSign,
         includes: 'vital-sign',
       },
-      {
-        label: 'Triệu chứng & khám tổng quan',
-        path: PATH_DASHBOARD.treatment.diagnosis,
-        includes: 'diagnosis',
-      },
+      // {
+      //   label: 'Triệu chứng & khám tổng quan',
+      //   path: PATH_DASHBOARD.treatment.diagnosis,
+      //   includes: 'diagnosis',
+      // },
       {
         label: 'Chuẩn đoán bệnh',
-        path: PATH_DASHBOARD.treatment.investigation,
+        path: PATH_DASHBOARD.treatment.diagnosis,
         includes: 'investigation',
       },
-      // {
-      //   label: 'Lịch sử thuốc',
-      //   path: PATH_DASHBOARD.treatment.prescriptionHistory,
-      //   includes: 'prescription-history',
-      // },
       {
         label: 'Kê đơn thuốc',
         path: PATH_DASHBOARD.treatment.prescription,
@@ -49,9 +44,14 @@ const MiniSidebar = () => {
 
   const handleNavigation = useCallback(
     (path) => {
-      navigate(replacePathParams(path, { patientId: params?.patientId }));
+      navigate(
+        replacePathParams(path, {
+          patientId: params?.patientId,
+          medicalRecordId: params?.medicalRecordId,
+        })
+      );
     },
-    [navigate, params?.patientId]
+    [navigate, params?.medicalRecordId, params?.patientId]
   );
 
   const renderButton = useCallback(

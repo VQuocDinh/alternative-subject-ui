@@ -100,7 +100,11 @@ const TablePrescription = () => {
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  navigate(PATH_DASHBOARD.treatment.prescription);
+                  navigate(
+                    replacePathParams(PATH_DASHBOARD.treatment.prescription, {
+                      patientId: params?.patientId,
+                    })
+                  );
                 }}
               >
                 + Thêm mới đơn thuốc

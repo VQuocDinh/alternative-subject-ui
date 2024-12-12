@@ -2,38 +2,28 @@ import { useState } from 'react';
 import {
   Table,
   TableBody,
-  TableCell,
   TableContainer,
-  TableRow,
   TablePagination,
-  IconButton,
-  Tooltip,
   Box,
   FormControlLabel,
   Switch,
 } from '@mui/material';
-import { HEAD_TABLE_PROPS, PATIENT_LIST_MOCK_DATA } from '../constant';
-import Iconify from '../../../common/components/Iconify';
+import { HEAD_TABLE_PROPS } from '../constant';
 import TableHeadCustom from '../../../common/components/mui-table/TableHeadCustom';
 import PatientTableRow from './PatientTableRow';
 import TableSkeleton from '../../../common/components/mui-table/TableSkeleton';
 import TableNoData from '../../../common/components/mui-table/TableNoData';
+import { useNavigate } from 'react-router-dom';
+import { replacePathParams } from '../../../common/utils/common.utils';
+import { PATH_DASHBOARD } from '../../../common/routes/path';
 
-const PatientTable = () => {
-  const [data, setData] = useState(PATIENT_LIST_MOCK_DATA);
-  const [selectedIds, setSelectedIds] = useState([]);
+const PatientTable = ({ patients, isLoading, isError }) => {
+  const navigate = useNavigate();
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(patients?.meta?.itemPerPage || 5);
   const [dense, setDense] = useState(false);
 
-  // Handle row selection
-  const handleSelectRow = (id) => {
-    setSelectedIds((prevSelectedIds) =>
-      prevSelectedIds.includes(id)
-        ? prevSelectedIds.filter((item) => item !== id)
-        : [...prevSelectedIds, id]
-    );
-  };
+  const patientList = patients?.data || [];
 
   // Handle page change
   const handleChangePage = (event, newPage) => {
@@ -51,44 +41,34 @@ const PatientTable = () => {
     setDense(event.target.checked);
   };
 
-  // Handle delete selected rows
-  const handleDeleteRows = (selectedIds) => {
-    const newData = data.filter((row) => !selectedIds.includes(row.id));
-    setData(newData);
-    setSelectedIds([]);
+  const handleOnEditRow = ({ patientId, recordId }) => {
+    navigate(
+      replacePathParams(PATH_DASHBOARD.treatment.vitalSign, {
+        patientId,
+        medicalRecordId: recordId,
+      })
+    );
   };
 
   return (
     <>
       <TableContainer sx={{ position: 'relative' }}>
-        {!!selectedIds.length && (
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              padding: 1,
-              backgroundColor: '#fff',
-              zIndex: 1,
-            }}
-          >
-            <Tooltip title="Xóa">
-              <IconButton color="primary" onClick={() => handleDeleteRows(selectedIds)}>
-                <Iconify icon={'eva:trash-2-outline'} />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        )}
         <Table size={dense ? 'small' : 'medium'}>
-          <TableHeadCustom headLabel={HEAD_TABLE_PROPS} rowCount={data?.length} />
+          <TableHeadCustom headLabel={HEAD_TABLE_PROPS} rowCount={patientList?.length} />
 
           <TableBody>
-            {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
-              <PatientTableRow row={row} onDeleteRow={() => {}} onSelectRow={() => {handleSelectRow}} />
-              
+            {patientList?.map((row, index) => (
+              <PatientTableRow
+                key={row?.id}
+                row={row}
+                index={index}
+                onEditRow={handleOnEditRow}
+                onDeleteRow={() => {}}
+                onSelectRow={() => {}}
+              />
             ))}
-            {data.length === 0 && <TableNoData isNotFound={true} />}
+            {isLoading && <TableSkeleton isLoading={isLoading} row={rowsPerPage} />}
+            {patientList?.length === 0 && <TableNoData isNotFound={isError} />}
           </TableBody>
         </Table>
       </TableContainer>
@@ -96,7 +76,7 @@ const PatientTable = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 15]}
           component="div"
-          count={data.length}
+          count={patients?.meta?.totalItems || 5}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

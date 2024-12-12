@@ -1,211 +1,138 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import Page from '../../../common/components/Page';
 import FormProvider from '../../../common/components/hook-form/FormProvider';
 import RHFTextField from '../../../common/components/hook-form/RHFTextField';
 import { useForm } from 'react-hook-form';
-import RHFSelect from '../../../common/components/hook-form/RHFSelect';
-import { MenuItem } from '@mui/material';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import axiosInstance from '@/common/utils/axios';
+import { API_TREATMENT_RECORD } from '@/common/constant/common.constant';
+import { useDispatch } from '@/common/redux/store';
+import useToast from '@/common/hooks/useToast';
+import { useParams } from 'react-router-dom';
+import { setCountFetchVitalSign } from '@/treatment/common/treatment.slice';
+
+// Define Yup schema
+const validationSchema = yup.object().shape({
+  weight: yup.number().required('Cân nặng là bắt buộc').typeError('Cân nặng phải là số'),
+  height: yup.number().required('Chiều cao là bắt buộc').typeError('Chiều cao phải là số'),
+  heartRate: yup.number().required('Nhịp tim là bắt buộc').typeError('Nhịp tim phải là số'),
+  respiratoryRate: yup.number().required('Nhịp thở là bắt buộc').typeError('Nhịp thở phải là số'),
+  bloodPressure: yup.string().required('Huyết áp là bắt buộc'),
+  temperature: yup.number().required('Nhiệt độ là bắt buộc').typeError('Nhiệt độ phải là số'),
+});
+
+const calculateBMI = (weight, height) => {
+  if (weight && height) {
+    return (weight / (height / 100) ** 2).toFixed(2);
+  }
+  return '';
+};
 
 const VitalSignForm = () => {
-  const methods = useForm();
-  const { control } = methods;
-  const [formData, setFormData] = useState({
-    weight: '',
-    systolicBP: '',
-    diastolicBP: '',
-    temperature: '',
-    height: '',
-    bmi: '',
-    pulse: '',
-    heartRate: '',
-    urineOutput: '',
-    bloodPressureR: '',
-    bloodPressureL: '',
-    spo2: '',
-    avpu: '',
-    injuryLevel: '',
-    movementAbility: '',
-    oxygenSupplement: '',
-    note: '',
+  const params = useParams();
+  const dispatch = useDispatch();
+  const methods = useForm({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      weight: '',
+      height: '',
+      heartRate: '',
+      respiratoryRate: '',
+      bloodPressure: '',
+      temperature: '',
+      bmi: '',
+      note: '',
+    },
   });
+  const { handleSubmit, watch, setValue, register, reset } = methods;
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
+  const weight = watch('weight');
+  const height = watch('height');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Submit logic here, such as calling an API
-    console.log('Submitted Data:', formData);
+  const { showToast, Toast } = useToast();
+
+  useEffect(() => {
+    const bmi = calculateBMI(weight, height);
+    setValue('bmi', parseInt(bmi));
+  }, [weight, height, setValue]);
+
+  const onSubmit = async (data) => {
+    try {
+      const response = await axiosInstance.post(
+        `${API_TREATMENT_RECORD}/${params?.medicalRecordId}/vital-signs`,
+        {
+          weight: data?.weight,
+          height: data?.height,
+          heart_rate: data?.heartRate,
+          respiratory_rate: data?.respiratoryRate,
+          blood_pressure: data?.bloodPressure,
+          temperature: data?.temperature,
+          bmi: data?.bmi,
+          note: data?.note,
+        }
+      );
+      dispatch(setCountFetchVitalSign());
+      showToast('success', 'Submitted successfully!');
+      reset();
+      console.log('Submitted Data:', response.data);
+    } catch (error) {
+      showToast('error', 'Error submitting data!');
+      console.error('Error submitting data:', error);
+    }
   };
 
   return (
     <Page>
       <div className="p-2">
-        <FormProvider onSubmit={handleSubmit} methods={methods}>
+        <FormProvider onSubmit={handleSubmit(onSubmit)} methods={methods}>
           <h3 className="mb-4 fw-bold">Vital sign</h3>
 
           <Row className="mb-3">
             <Col md={4}>
-              <RHFTextField
-                name={'weight'}
-                label="Cân nặng (KG)"
-                placeholder="Cân nặng (KG)"
-                value={formData.weight}
-                onChange={handleChange}
-              />
+              <RHFTextField name={'weight'} label="Cân nặng (KG)" placeholder="Cân nặng (KG)" />
             </Col>
             <Col md={4}>
-              <RHFTextField
-                name="systolicBP"
-                value={formData.systolicBP}
-                onChange={handleChange}
-                placeholder="Huyết áp tâm thu"
-                label={'Huyết áp tâm thu'}
-              />
+              <RHFTextField name="height" placeholder="Chiều cao" label="Chiều cao" />
             </Col>
             <Col md={4}>
-              <RHFTextField
-                name="temperature"
-                value={formData.temperature}
-                onChange={handleChange}
-                placeholder="Nhiệt độ"
-                label="Nhiệt độ (C)"
-              />
+              <RHFTextField name="temperature" placeholder="Nhiệt độ" label="Nhiệt độ (C)" />
+            </Col>
+          </Row>
+
+          <Row className="mb-3">
+            <Col md={4}>
+              <RHFTextField name="heartRate" placeholder="Nhịp tim" label="Nhịp tim" />
+            </Col>
+            <Col md={4}>
+              <RHFTextField name="respiratoryRate" placeholder="Nhịp thở" label="Nhịp thở" />
+            </Col>
+            <Col md={4}>
+              <RHFTextField name="bloodPressure" placeholder="Huyết áp" label="Huyết áp" />
             </Col>
           </Row>
 
           <Row className="mb-3">
             <Col md={4}>
               <RHFTextField
-                name="diastolicBP"
-                value={formData.diastolicBP}
-                onChange={handleChange}
-                placeholder="Huyết áp tâm trương"
-                label="Huyết áp tâm trương"
-              />
-            </Col>
-            <Col md={4}>
-              <RHFTextField
-                name="height"
-                value={formData.height}
-                onChange={handleChange}
-                placeholder="Chiều cao"
-                label="Chiều cao"
-              />
-            </Col>
-            <Col md={4}>
-              <RHFTextField
+                shrink
                 name="bmi"
-                value={formData.bmi}
-                onChange={handleChange}
+                InputLabelProps={{ shrink: true }}
                 placeholder="BMI"
                 label="BMI"
+                readOnly
               />
             </Col>
           </Row>
 
-          <Row className="mb-3">
-            <Col md={4}>
-              <RHFTextField
-                name="pulse"
-                value={formData.pulse}
-                onChange={handleChange}
-                placeholder="Nhip thở"
-                label="Nhip thở"
-              />
-            </Col>
-            <Col md={4}>
-              <RHFTextField
-                name="heartRate"
-                value={formData.heartRate}
-                onChange={handleChange}
-                placeholder="Nhip tim"
-                label="Nhip tim"
-              />
-            </Col>
-            <Col md={4}>
-              <RHFTextField
-                name="urineOutput"
-                value={formData.urineOutput}
-                onChange={handleChange}
-                placeholder="Lượng nước tiểu"
-                label="Lượng nước tiểu"
-              />
-            </Col>
-          </Row>
-
-          <Row className="mb-3">
-            <Col md={4}>
-              <RHFTextField
-                name="bloodPressureR"
-                value={formData.bloodPressureR}
-                onChange={handleChange}
-                placeholder="Đường huyết (R)"
-                label="Đường huyết (R)"
-              />
-            </Col>
-            <Col md={4}>
-              <RHFTextField
-                name="bloodPressureL"
-                value={formData.bloodPressureL}
-                onChange={handleChange}
-                placeholder="Đường huyết (L)"
-                label="Đường huyết (L)"
-              />
-            </Col>
-            <Col md={4}>
-              <RHFTextField
-                name="spo2"
-                value={formData.spo2}
-                onChange={handleChange}
-                placeholder="SPO2"
-                label="SPO2"
-              />
-            </Col>
-          </Row>
-          <Row className="mb-3">
-            <Col md={4}>
-              <RHFSelect name="avpu" label={'AVPU'} SelectProps={{ native: false }}>
-                <MenuItem value="A">A - Alert</MenuItem>
-                <MenuItem value="V">V - Voice</MenuItem>
-                <MenuItem value="P">P - Pain</MenuItem>
-                <MenuItem value="U">U - Unresponsive</MenuItem>
-              </RHFSelect>
-            </Col>
-            <Col md={4}>
-              <RHFSelect name="injuryLevel" label={'Chấn thương'} SelectProps={{ native: false }}>
-                <MenuItem value={''}>Không có</MenuItem>
-                <MenuItem value="minor">Nhẹ</MenuItem>
-                <MenuItem value="moderate">Vừa</MenuItem>
-                <MenuItem value="severe">Nặng</MenuItem>
-              </RHFSelect>
-            </Col>
-            <Col md={4}>
-              <RHFSelect
-                name="movementAbility"
-                label={'Khả năng vận động'}
-                SelectProps={{ native: false }}
-              >
-                <MenuItem value="good">Tốt</MenuItem>
-                <MenuItem value="average">Trung bình</MenuItem>
-                <MenuItem value="poor">Kém</MenuItem>
-              </RHFSelect>
-            </Col>
-          </Row>
           <Form.Group controlId="note">
             <Form.Label>Ghi chú</Form.Label>
             <Form.Control
+              {...register('note')}
               as="textarea"
               rows={3}
               name="note"
-              value={formData.note}
-              onChange={handleChange}
               placeholder="Ghi chú"
             />
           </Form.Group>
@@ -229,6 +156,7 @@ const VitalSignForm = () => {
             </Button>
           </div>
         </FormProvider>
+        <Toast />
       </div>
     </Page>
   );

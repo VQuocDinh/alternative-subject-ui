@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import VitalSignForm from './components/VitalSignForm';
 import PatientInfo from '../common/components/PatientInfo';
 import MiniSidebar from '../common/components/MiniSidebar';
+import VitalSignList from './components/VitalSignList'; // Import the new component
 
 const VitalSignContainer = () => {
   const params = useParams();
@@ -14,6 +15,7 @@ const VitalSignContainer = () => {
       <div className="w-100 d-flex gap-4 flex-column" style={{ marginBottom: '100px' }}>
         <PatientInfo id={params.patientId} />
         <VitalSignForm />
+        <VitalSignList patientId={params?.medicalRecordId} />
       </div>
     </div>
   );
