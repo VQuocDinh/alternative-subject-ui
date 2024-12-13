@@ -30,6 +30,7 @@ const HEAD_TABLE_PROPS = [
   { id: 'height', label: 'Chiều cao', align: 'center' },
   { id: 'bmi', label: 'BMI', align: 'center' },
   { id: 'note', label: 'Ghi chú', align: 'center' },
+  { id: 'action' },
 ];
 
 const VitalSignList = () => {
@@ -89,6 +90,10 @@ const VitalSignList = () => {
     setDense(event.target.checked);
   };
 
+  const handleDeleteRow = (id) => {
+    setVitalSigns((prevVitalSigns) => prevVitalSigns.filter((vitalSign) => vitalSign.id !== id));
+  };
+
   return (
     <Page>
       <h3 className="mb-4 fw-bold">Lịch sử vital sign</h3>
@@ -98,7 +103,12 @@ const VitalSignList = () => {
           <TableHeadCustom headLabel={HEAD_TABLE_PROPS} rowCount={vitalSignList.length} />
           <TableBody>
             {vitalSignList.map((row, index) => (
-              <VitalSignTableRow key={row.id} row={row} index={index} />
+              <VitalSignTableRow
+                key={row.id}
+                row={row}
+                index={index}
+                onDeleteRow={() => handleDeleteRow(row.id)}
+              />
             ))}
             {isLoading && <TableSkeleton isLoading={isLoading} row={rowsPerPage} />}
             {vitalSignList.length === 0 && <TableNoData isNotFound={isError} />}
