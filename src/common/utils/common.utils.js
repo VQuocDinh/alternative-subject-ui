@@ -75,5 +75,5 @@ export const formatDateTime = (dateTime) => {
   if (!isValid(date)) {
     return 'Invalid date';
   }
-  return format(date, 'yyyy-MM-dd HH:mm:ss');
+  return format(date, 'dd-MM-yyyy HH:mm:ss');
 };
