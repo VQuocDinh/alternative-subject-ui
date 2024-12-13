@@ -46,7 +46,7 @@ const LoginSignup = () => {
       setError('Passwords do not match!');
       return;
     }
-    const url = isLogin ? '/api/auth/login' : '/api/auth/register';
+    const url = isLogin ? '/auth/login' : '/auth/register';
     try {
       const res = await axios.post(`${baseUrl}${url}`, { email, password });
       if (res?.data?.success) {

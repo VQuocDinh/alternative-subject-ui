@@ -10,6 +10,7 @@ import {
   Box,
   MenuItem,
 } from '@mui/material';
+
 import MiniSidebar from '../common/components/MiniSidebar';
 import Page from '@/common/components/Page';
 import DiagnosisForm from './components/DiagnosisForm';

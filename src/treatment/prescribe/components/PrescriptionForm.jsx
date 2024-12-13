@@ -10,30 +10,62 @@ import InteractionModal from './InteractionModal';
 import { medicineService } from '@/service/medicine';
 import Loading from '@/common/components/loading';
 import useLoading from '@/hook/useLoading';
-import { unitOptions, frequencyOptions, timingOptions, routeOptions } from '../mock';
+import { unitOptions, frequencyOptions, timingOptions, routeOptions, dosageOptions } from '../mock';
 import { drugInteractionService } from '@/service/drugInteraction';
+import { useNavigate } from 'react-router-dom';
+import * as Yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import PrescriptionService from '@/service/prescription';
 
 const PrescriptionForm = () => {
-  const methods = useForm({
-    defaultValues: {
-      pharmacyId: '',
-      drugId: '',
-      quantity: '',
-      unit: '',
-      frequency: '',
-      duration: '',
-      durationUnit: 'days',
-      route: '',
-      timing: '',
-      instructions: '',
-      notes: '',
-    },
-  });
+  const navigate = useNavigate();
   const [showInteractionModal, setShowInteractionModal] = useState(false);
   const [drugInteractions, setDrugInteractions] = useState([]);
   const [selectedDrugs, setSelectedDrugs] = useState([]);
   const [medicinesList, setMedicinesList] = useState([]);
   const { isLoading, withLoading } = useLoading();
+
+  const [formData, setFormData] = useState({
+    medical_record_id: '1',
+    doctor_id: '1',
+    notes: 'Bệnh khá nặng',
+    medicines: [],
+  });
+
+  const PrescriptionSchema = Yup.object().shape({
+    drugId: Yup.string().required('Vui lòng chọn thuốc'),
+    quantity: Yup.number()
+      .required('Vui lòng nhập số lượng')
+      .positive('Số lượng phải lớn hơn 0')
+      .typeError('Số lượng phải là số'),
+    unit: Yup.string().required('Vui lòng chọn đơn vị'),
+    dosage: Yup.string().required('Vui lòng chọn liều lượng'),
+    frequency: Yup.string().required('Vui lòng chọn tần suất sử dụng'),
+    duration: Yup.number()
+      .required('Vui lòng nhập thời gian điều trị')
+      .positive('Thời gian điều trị phải lớn hơn 0')
+      .typeError('Thời gian điều trị phải là số'),
+    route: Yup.string().required('Vui lòng chọn đường dùng'),
+    timing: Yup.string().required('Vui lòng chọn thời điểm dùng'),
+    instructions: Yup.string(),
+    notes: Yup.string(),
+  });
+
+  const methods = useForm({
+    defaultValues: {
+      drugId: '',
+      quantity: '',
+      unit: '',
+      dosage: '',
+      frequency: '',
+      duration: '',
+      route: '',
+      timing: '',
+      instructions: '',
+      notes: '',
+    },
+    resolver: yupResolver(PrescriptionSchema),
+  });
 
   const fetchMedicines = async () => {
     try {
@@ -66,55 +98,115 @@ const PrescriptionForm = () => {
     }
   };
 
-  const handleDrugSelect = (drugId) => {
-    const values = methods.getValues();
-    const selectedDrug = medicinesList.find((drug) => drug.id === drugId);
+  const handleDrugSelect = async () => {
+    try {
+      const isValid = await methods.trigger();
+      const values = methods.getValues();
+      const errors = methods.formState.errors;
 
-    const newDrug = {
-      id: drugId,
-      name: selectedDrug?.name,
-      quantity: values?.quantity,
-      unit: values?.unit,
-      frequency: values?.frequency,
-      duration: values?.duration,
-      durationUnit: values?.durationUnit,
-      route: values?.route,
-      timing: values?.timing,
-      instructions: values?.instructions,
-      notes: values?.notes,
-    };
+      if (!isValid) {
+        Object.values(errors)[0];
+        return;
+      }
 
-    setSelectedDrugs([...selectedDrugs, newDrug]);
-    checkDrugInteractions(drugId);
+      const selectedDrug = medicinesList.find((drug) => drug.id === values.drugId);
+      if (!selectedDrug) {
+        alert('Vui lòng chọn một loại thuốc');
+        return;
+      }
 
-    methods.reset({
-      ...methods.getValues(),
-      drugId: '',
-      quantity: '',
-      unit: '',
-      frequency: '',
-      duration: '',
-      route: '',
-      timing: '',
-      instructions: '',
-    });
+      // Kiểm tra thuốc đã tồn tại
+      const isDrugExist = selectedDrugs.some((drug) => drug.id === values.drugId);
+      if (isDrugExist) {
+        alert('Thuốc đã được thêm vào đơn. Vui lòng chọn thuốc khác hoặc chỉnh sửa thuốc đã có.');
+        return;
+      }
+
+      // Tạo object thuốc mới
+      const newDrug = {
+        id: values.drugId,
+        name: selectedDrug.name,
+        quantity: values.quantity,
+        unit: values.unit,
+        dosage: values.dosage,
+        frequency: values.frequency,
+        duration: values.duration,
+        route: values.route,
+        timing: values.timing,
+        instructions: values.instructions || '',
+        notes: values.notes || '',
+      };
+
+      // Thêm thuốc vào danh sách
+      setSelectedDrugs((prev) => [...prev, newDrug]);
+      // Reset form sau khi thêm thành công
+      methods.reset({
+        drugId: '',
+        quantity: '',
+        unit: '',
+        dosage: '',
+        frequency: '',
+        duration: '',
+        route: '',
+        timing: '',
+        instructions: '',
+        notes: '',
+      });
+    } catch (error) {
+      console.error('Error adding drug:', error);
+      alert('Có lỗi xảy ra khi thêm thuốc');
+    }
   };
 
-  const handleSubmit = () => {};
+  const onSubmit = async () => {
+    try {
+      if (selectedDrugs.length === 0) {
+        alert('Vui lòng thêm ít nhất một loại thuốc');
+        return;
+      }
 
-  const handleEditDrug = (index) => {};
+      const prescriptionData = {
+        ...formData,
+        medicines: selectedDrugs,
+      };
 
-  const handleDeleteDrug = (index) => {};
+      console.log('prescriptionData: ', prescriptionData);
+      await PrescriptionService.addPescription(prescriptionData);
+    } catch (error) {
+      console.error('Error submitting prescription:', error);
+      alert('Có lỗi xảy ra khi lưu đơn thuốc');
+    }
+  };
 
-  const handleAddDrug = () => {};
+  const handleEditDrug = (index) => {
+    const drugToEdit = selectedDrugs[index];
+    methods.reset(drugToEdit);
+    const newSelectedDrugs = [...selectedDrugs];
+    newSelectedDrugs.splice(index, 1);
+    setSelectedDrugs(newSelectedDrugs);
+  };
 
-  const handleCancel = () => {};
+  const handleDeleteDrug = (index) => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa thuốc này?')) {
+      const newSelectedDrugs = [...selectedDrugs];
+      newSelectedDrugs.splice(index, 1);
+      setSelectedDrugs(newSelectedDrugs);
+    }
+  };
+
+  const handleCancel = () => {
+    if (window.confirm('Bạn có chắc chắn muốn hủy kê đơn?')) {
+      methods.reset();
+      setSelectedDrugs([]);
+      navigate(-1);
+    }
+  };
 
   return (
     <Page>
       {isLoading && <Loading variant="medical" text="Đang tải dữ liệu..." />}
       <div className="p-4">
-        <FormProvider methods={methods} onSubmit={handleSubmit}>
+        <FormProvider methods={methods} onSubmit={methods.handleSubmit(onSubmit)}>
           <Card>
             <Card.Header>
               <h4 className="mb-0">Kê đơn thuốc</h4>
@@ -125,9 +217,14 @@ const PrescriptionForm = () => {
                   <RHFSelect
                     name="drugId"
                     label="Tên thuốc *"
-                    value={selectedDrug?.name}
-                    SelectProps={{ native: false }}
-                    onChange={(e) => handleDrugSelect(e.target.value)}
+                    SelectProps={{
+                      native: false,
+                      onChange: (e) => {
+                        const value = e.target.value;
+                        methods.setValue('drugId', value);
+                        checkDrugInteractions(value);
+                      },
+                    }}
                   >
                     <MenuItem value="">Chọn thuốc</MenuItem>
                     {medicinesList.map((drug) => (
@@ -140,18 +237,39 @@ const PrescriptionForm = () => {
               </Row>
 
               <Row className="mb-4">
-                <Col md={6}>
+                <Col md={4}>
                   <RHFTextField
                     name="quantity"
                     label="Số lượng *"
                     type="number"
                     placeholder="Nhập số lượng"
+                    error={Boolean(methods.formState.errors.quantity)}
+                    helperText={methods.formState.errors.quantity?.message}
                   />
                 </Col>
-                <Col md={6}>
-                  <RHFSelect name="unit" label="Đơn vị *" SelectProps={{ native: false }}>
+                <Col md={4}>
+                  <RHFSelect
+                    name="unit"
+                    label="Đơn vị *"
+                    SelectProps={{ native: false }}
+                    error={Boolean(methods.formState.errors.unit)}
+                    helperText={methods.formState.errors.unit?.message}
+                  >
                     {unitOptions.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
+                      <MenuItem key={option.value} value={option.label}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </RHFSelect>
+                </Col>
+                <Col md={4}>
+                  <RHFSelect
+                    name="dosage"
+                    label="Liều lượng *"
+                    SelectProps={{ native: false }}
+                  >
+                    {dosageOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.label}>
                         {option.label}
                       </MenuItem>
                     ))}
@@ -167,7 +285,7 @@ const PrescriptionForm = () => {
                     SelectProps={{ native: false }}
                   >
                     {frequencyOptions.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
+                      <MenuItem key={option.value} value={option.label}>
                         {option.label}
                       </MenuItem>
                     ))}
@@ -176,7 +294,7 @@ const PrescriptionForm = () => {
                 <Col md={6}>
                   <RHFSelect name="timing" label="Thời điểm dùng *" SelectProps={{ native: false }}>
                     {timingOptions.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
+                      <MenuItem key={option.value} value={option.label}>
                         {option.label}
                       </MenuItem>
                     ))}
@@ -196,7 +314,7 @@ const PrescriptionForm = () => {
                 <Col md={6}>
                   <RHFSelect name="route" label="Đường dùng *" SelectProps={{ native: false }}>
                     {routeOptions.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
+                      <MenuItem key={option.value} value={option.label}>
                         {option.label}
                       </MenuItem>
                     ))}
@@ -235,7 +353,7 @@ const PrescriptionForm = () => {
                     <thead>
                       <tr>
                         <th>Tên thuốc</th>
-                        <th>Liều dùng</th>
+                        <th>Số lượng</th>
                         <th>Tần suất</th>
                         <th>Thời gian</th>
                         <th>Thao tác</th>
@@ -254,13 +372,13 @@ const PrescriptionForm = () => {
                                 variant="outline-primary"
                                 onClick={() => handleEditDrug(index)}
                               >
-                                <i className="fas fa-edit"></i>
+                                <i className="fas fa-edit">Sửa</i>
                               </Button>
                               <Button
                                 variant="outline-danger"
                                 onClick={() => handleDeleteDrug(index)}
                               >
-                                <i className="fas fa-trash"></i>
+                                <i className="fas fa-trash">Xóa</i>
                               </Button>
                             </ButtonGroup>
                           </td>
@@ -272,13 +390,27 @@ const PrescriptionForm = () => {
               )}
 
               <div className="d-flex justify-content-end gap-2">
-                <Button variant="primary" type="submit" disabled={selectedDrugs.length === 0}>
-                  Lưu đơn thuốc
+                <Button
+                  variant="primary"
+                  onClick={onSubmit}
+                  disabled={isLoading || selectedDrugs.length === 0}
+                >
+                  {isLoading ? 'Đang lưu...' : 'Lưu đơn thuốc'}
                 </Button>
-                <Button variant="outline-primary" type="button" onClick={handleAddDrug}>
+                <Button
+                  variant="outline-primary"
+                  type="button"
+                  onClick={handleDrugSelect}
+                  disabled={isLoading}
+                >
                   Thêm thuốc
                 </Button>
-                <Button variant="outline-secondary" type="button" onClick={handleCancel}>
+                <Button
+                  variant="outline-secondary"
+                  type="button"
+                  onClick={handleCancel}
+                  disabled={isLoading}
+                >
                   Hủy
                 </Button>
               </div>
