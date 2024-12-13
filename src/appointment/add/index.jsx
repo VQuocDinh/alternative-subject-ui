@@ -25,20 +25,21 @@ import dayjs from 'dayjs'; // Import Day.js
 import { useEffect, useState } from 'react';
 import TimeItem from './components/TimeItem';
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 
 function generateTimeSlots() {
   const times = [];
 
   const addTimeSlots = (startHour, startMinute, endHour, endMinute) => {
-    let start = startHour * 60 + startMinute; // Chuyển giờ bắt đầu sang phút
-    const end = endHour * 60 + endMinute; // Chuyển giờ kết thúc sang phút
+    let start = startHour * 60 + startMinute;
+    const end = endHour * 60 + endMinute;
 
     while (start <= end) {
       const hours = Math.floor(start / 60);
       const minutes = start % 60;
       const timeString = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
       times.push(timeString);
-      start += 30; // Tăng thêm 30 phút
+      start += 30;
     }
   };
 
@@ -57,7 +58,12 @@ const AppointmentAdd = () => {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
 
   const validationSchema = Yup.object().shape({
-    hoten: Yup.string().required('Vui lòng nhập họ và tên'),
+    hoten: Yup.string()
+      .required('Vui lòng nhập họ và tên')
+      .matches(
+        /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]+$/,
+        'Họ tên không được chứa ký tự đặc biệt hoặc số'
+      ),
     email: Yup.string().email('Email không hợp lệ').required('Vui lòng nhập email'),
     phone: Yup.string()
       .matches(/^[0-9]+$/, 'Số điện thoại chỉ được chứa số')
@@ -96,16 +102,34 @@ const AppointmentAdd = () => {
   const onSubmit = async (data) => {
     try {
       console.log('Form data:', data);
-      // await savePatient(data);
-      // toast.success('Thêm bệnh nhân thành công');
-      // navigate('/patients');
+      
+      // Add your API call here to save the appointment
+      // await axios.post(...);
+
+      // Show success message
+      await Swal.fire({
+        icon: 'success',
+        title: 'Đặt lịch thành công!',
+        text: 'Thông tin lịch hẹn của bạn đã được ghi nhận',
+        confirmButtonText: 'Đóng',
+        confirmButtonColor: '#3085d6',
+      });
+
     } catch (error) {
       console.error('Error saving patient:', error);
       toast.error('Có lỗi xảy ra khi lưu thông tin');
+      
+      // Show error message
+      await Swal.fire({
+        icon: 'error',
+        title: 'Đặt lịch thất bại!',
+        text: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
+        confirmButtonText: 'Đóng',
+        confirmButtonColor: '#d33',
+      });
     }
   };
 
-  // Use Day.js for date management
   const [selectedDate, setSelectedDate] = useState(dayjs());
 
   const [specializations, setSpecializations] = useState([]);
@@ -148,10 +172,8 @@ const AppointmentAdd = () => {
     fetchSpecializations();
   }, []);
 
-  // Thêm hàm xử lý khi chọn time slot
   const handleTimeSlotSelect = (value) => {
     setSelectedTimeSlot(value);
-    // Cập nhật giá trị vào form
     setValue('time', value, { shouldValidate: true });
   };
 
