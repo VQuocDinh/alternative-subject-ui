@@ -35,6 +35,7 @@ export const PATH_DASHBOARD = {
   },
   appointment: {
     root: path(ROOT_DASHBOARD, '/appointment'),
+    calendar: path(ROOT_DASHBOARD, '/appointment/calendar'),
     list: path(ROOT_DASHBOARD, '/appointment/list'),
     add: path(ROOT_DASHBOARD, '/appointment/add'),
     da: path(ROOT_DASHBOARD, '/appointment/da'),

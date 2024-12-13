@@ -13,3 +13,6 @@ export const API_MEDICAL_RECORDS = '/medical-records';
 // Prescription
 export const API_PRESCRIPTION = '/prescription';
 export const API_PRESCRIPTION_LIST = '/prescription/list';
+
+// Doctor
+export const API_DOCTOR_AVAILABILITY = '/doctor/availability';

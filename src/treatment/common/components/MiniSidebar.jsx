@@ -31,7 +31,7 @@ const MiniSidebar = () => {
       {
         label: 'Chuẩn đoán bệnh',
         path: PATH_DASHBOARD.treatment.diagnosis,
-        includes: 'investigation',
+        includes: 'diagnosis',
       },
       {
         label: 'Kê đơn thuốc',
