@@ -10,7 +10,7 @@ import {
   Paper,
   Box,
 } from '@mui/material';
-import { searchDisease } from '@/common/utils/common.utils';
+// import { searchDisease } from '@/common/utils/common.utils';
 import useToast from '@/common/hooks/useToast';
 import MiniSidebar from '../common/components/MiniSidebar';
 import axiosInstance from '@/common/utils/axios';

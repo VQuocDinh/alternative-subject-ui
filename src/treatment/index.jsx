@@ -41,7 +41,7 @@ const TreatmentCommonContainer = () => {
       <Page>
         {' '}
         <div className="mt-4" style={{ paddingRight: '16px', paddingLeft: '16px' }}>
-          <h3 className="fw-bold">Danh sách bệnh nhân</h3>
+          <h3 className="fw-bold">Danh sách bệnh án</h3>
           <PatientTable
             patients={patientList}
             isLoading={isLoading}
