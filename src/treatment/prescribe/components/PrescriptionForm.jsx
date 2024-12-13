@@ -57,21 +57,10 @@ const PrescriptionForm = () => {
         newDrug: drugId,
       });
 
-      // const mockInteractions = [
-      //   {
-      //     severity: 'high',
-      //     description: 'Tương tác nghiêm trọng giữa Drug A và Drug B',
-      //     recommendation: 'Không nên kê đơn đồng thời',
-      //   },
-      //   {
-      //     severity: 'medium',
-      //     description: 'Có thể gây tác dụng phụ khi dùng chung',
-      //     recommendation: 'Cân nhắc điều chỉnh liều lượng',
-      //   },
-      // ];
-      console.log('respone: ', response)
       setDrugInteractions(response?.metadata?.data?.interactions);
-      setShowInteractionModal(true);
+      if (response.metadata?.hasInteractions) {
+        setShowInteractionModal(true);
+      }
     } catch (error) {
       console.error('Error checking drug interactions:', error);
     }
@@ -131,12 +120,12 @@ const PrescriptionForm = () => {
               <h4 className="mb-0">Kê đơn thuốc</h4>
             </Card.Header>
             <Card.Body>
-              {/* Chọn thuốc */}
               <Row className="mb-4">
                 <Col md={12}>
                   <RHFSelect
                     name="drugId"
                     label="Tên thuốc *"
+                    value={selectedDrug?.name}
                     SelectProps={{ native: false }}
                     onChange={(e) => handleDrugSelect(e.target.value)}
                   >
