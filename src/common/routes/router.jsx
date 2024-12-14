@@ -49,7 +49,9 @@ const PrescriptionHistoryContainer = lazy(() => import('../../treatment/prescrip
 const DetailPrescriptionHistoryContainer = lazy(
   () => import('../../treatment/detail-prescription')
 );
-const PrescriptionContainer = lazy(() => import('../../treatment/prescribe'));
+const PrescribeContainer = lazy(() => import('../../treatment/prescribe'));
+const PrescriptionContainer = lazy(() => import('../../treatment/prescription'));
+const ScheduleMedicine = lazy(() => import('../../treatment/medication-schedule'));
 const DiagnosisContainer = lazy(() => import('../../treatment/diagnosis'));
 
 const routes = [
@@ -118,6 +120,14 @@ const routes = [
           {
             path: PATH_DASHBOARD.treatment.prescription,
             element: <PrescriptionContainer />,
+          },
+          {
+            path: PATH_DASHBOARD.treatment.scheduleMedicine,
+            element: <ScheduleMedicine />,
+          },
+          {
+            path: PATH_DASHBOARD.treatment.prescribe,
+            element: <PrescribeContainer />,
           },
           {
             path: PATH_DASHBOARD.treatment.overview,

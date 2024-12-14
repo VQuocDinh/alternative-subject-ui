@@ -23,7 +23,7 @@ const TableContainer = ({
   handleEdit,
   onRowClick,
   children,
-  headerMapping
+  headerMapping,
 }) => {
   return (
     <div className="p-3">
@@ -36,25 +36,17 @@ const TableContainer = ({
         )}
       </div>
       <Table striped bordered hover>
-        <TableHeader header={headerMapping ? header.map(h => headerMapping[h]): header} />
+        <TableHeader header={headerMapping ? header.map((h) => headerMapping[h]) : header} />
         <tbody>
           {data.map((row, rowIndex) => (
-            <tr 
+            <tr
               key={rowIndex}
               onClick={() => onRowClick && onRowClick(row.id)}
-              className="cursor-pointer"
+              className="cursor-pointer text-center"
             >
               {header.map((col, colIndex) => (
                 <td key={colIndex}>{row[col]}</td>
               ))}
-              <td 
-                className="d-flex justify-content-around align-items-center"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Button onClick={() => handleEdit(row.id)} className="btn btn-secondary">
-                  Chỉnh sửa
-                </Button>
-              </td>
             </tr>
           ))}
         </tbody>

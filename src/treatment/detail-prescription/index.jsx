@@ -1,8 +1,9 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import Page from '../../common/components/Page';
 import { Badge, Button, Card, Col, Row, Table } from 'react-bootstrap';
-import { FaArrowLeft, FaEdit, FaPrint } from 'react-icons/fa';
+import { FaArrowLeft, FaCalendar, FaEdit, FaPrint } from 'react-icons/fa';
 import MiniSidebar from '../common/components/MiniSidebar';
+import { PATH_DASHBOARD } from '@/common/routes/path';
 
 const DetailPrescriptionHistory = () => {
   const { id } = useParams();
@@ -66,7 +67,11 @@ const DetailPrescriptionHistory = () => {
                   <h4 className="mb-0 text-primary">Đơn thuốc #{id}</h4>
                 </div>
                 <div>
-                  <Button variant="outline-primary" className="me-2">
+                  <Button variant="outline-success" className="me-2">
+                    <FaCalendar className="me-2" />
+                    Lịch uống thuốc
+                  </Button>
+                  <Button variant="outline-warning" className="me-2">
                     <FaPrint className="me-2" />
                     In đơn thuốc
                   </Button>

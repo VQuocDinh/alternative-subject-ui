@@ -5,7 +5,6 @@ import MiniSidebar from '../common/components/MiniSidebar';
 
 const PrescriptionContainer = () => {
   const params = useParams();
-  console.log('prescription id: ', params.patientId);
   return (
     <div className="w-100 h-100 d-flex flex-row gap-3 ">
       <div className="" style={{ width: '20%' }}>

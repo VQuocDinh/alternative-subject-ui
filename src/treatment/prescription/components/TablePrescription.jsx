@@ -1,13 +1,14 @@
 import Page from '../../../common/components/Page';
 import TableContainer from '../../../common/components/table/TableContainer';
-import { Card, Form, InputGroup } from 'react-bootstrap';
+import { Card, Col, Form, InputGroup, Row } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
-import { replacePathParams } from '../../../common/utils/common.utils';
+import { getPrescriptionStatusStyle, replacePathParams } from '../../../common/utils/common.utils';
 import { PATH_DASHBOARD } from '../../../common/routes/path';
-import PrescriptionService from '../../../service/prescription';
 import Pagination from '../../../common/components/Pagination';
+import axiosInstance from '@/common/utils/axios';
+import { API_PRESCRIPTION_LIST } from '@/common/constant/common.constant';
 
 const TablePrescription = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,40 +18,51 @@ const TablePrescription = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [prescriptions, setPrescriptions] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const getPrescriptionsByPatient = async () => {
-    setIsLoading(true);
-    try {
-      const response = await PrescriptionService.getByPatient();
-      if (response?.data?.success) {
-        setPrescriptions(response.data.data || []);
-        setTotalPages(Math.ceil(response.data.total / presciptionPerPage));
-      }
-    } catch (error) {
-      console.error('Error fetching presciption list:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { patientId } = params;
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getPrescriptionsByPatient();
-  }, []);
+    const fetchPrescriptionsByPatient = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axiosInstance.get(`${API_PRESCRIPTION_LIST}/${patientId}`);
+        if (response?.data?.status == 200) {
+          console.log(response);
+          setPrescriptions(response.data.metadata || []);
+          setTotalPages(Math.ceil(response.data.total / presciptionPerPage));
+        }
+      } catch (error) {
+        console.error('Error fetching presciption list:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchPrescriptionsByPatient(patientId);
+  }, [patientId]);
 
-  if (isLoading) {
-    return <div>Loading presciption...</div>;
-  }
-
-  const header = ['id', 'medical_record_id', 'doctor_name', 'prescribed_at', 'notes'];
+  const header = [
+    'id',
+    'medical_record_id',
+    'doctor_name',
+    'prescribed_at',
+    'notes',
+    'status',
+    'updated_at',
+  ];
 
   const formatPrescriptionData = (prescriptions) => {
     return prescriptions.map((prescription) => ({
       id: prescription.id,
       medical_record_id: prescription.medical_record_id,
-      doctor_name: `${prescription.doctor.first_name} ${prescription.doctor.last_name}`,
+      doctor_name: `${prescription.Doctor?.first_name} ${prescription.Doctor?.last_name}`,
       prescribed_at: new Date(prescription.prescribed_at).toLocaleDateString('vi-VN'),
       notes: prescription.notes,
+      status: (
+        <span className={getPrescriptionStatusStyle(prescription.status)}>
+          {prescription.status.toUpperCase()}
+        </span>
+      ),
+      updated_at: new Date(prescription.updated_at).toLocaleDateString('vi-VN'),
     }));
   };
 
@@ -83,11 +95,13 @@ const TablePrescription = () => {
   };
 
   const headerMapping = {
-    id: 'ID',
+    id: '#',
     medical_record_id: 'Mã bệnh án',
     doctor_name: 'Bác sĩ',
     prescribed_at: 'Ngày kê đơn',
     notes: 'Ghi chú',
+    status: 'Trạng thái',
+    updated_at: 'Ngày cập nhật',
   };
 
   return (
@@ -95,35 +109,24 @@ const TablePrescription = () => {
       <div className="prescription-page">
         <Card className="outline-0 border-0">
           <Card.Body>
-            <div className="d-flex justify-content-between align-items-center mb-4">
-              <h4 className="mb-0 text-primary">Danh sách đơn thuốc</h4>
-              <button
-                className="btn btn-primary"
-                onClick={() => {
-                  navigate(
-                    replacePathParams(PATH_DASHBOARD.treatment.prescription, {
-                      patientId: params?.patientId,
-                    })
-                  );
-                }}
-              >
-                + Thêm mới đơn thuốc
-              </button>
-            </div>
-
-            <div className="mb-4">
-              <InputGroup>
-                <InputGroup.Text className="bg-light">
-                  <FaSearch className="text-muted" />
-                </InputGroup.Text>
-                <Form.Control
-                  placeholder="Tìm kiếm theo bác sĩ hoặc ghi chú..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="border-left-0"
-                />
-              </InputGroup>
-            </div>
+            <Row className="justify-content-between p-3">
+              <Col xs={12} sm={12} md={4} lg={4}>
+                <h4 className="mb-0 text-primary">Danh sách đơn thuốc</h4>
+              </Col>
+              <Col xs={12} sm={12} md={4} lg={4}>
+                <InputGroup>
+                  <InputGroup.Text className="bg-light">
+                    <FaSearch className="text-muted" />
+                  </InputGroup.Text>
+                  <Form.Control
+                    placeholder="Tìm kiếm theo bác sĩ hoặc ghi chú..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="border-left-0"
+                  />
+                </InputGroup>
+              </Col>
+            </Row>
 
             <div className="table-container">
               <TableContainer
@@ -133,6 +136,14 @@ const TablePrescription = () => {
                 isActionButton={true}
                 className="table-hover"
                 onRowClick={handleRowClick}
+                buttonTitle="Thêm đơn thuốc mới"
+                onHandleAdd={() => {
+                  navigate(
+                    replacePathParams(PATH_DASHBOARD.treatment.prescribe, {
+                      patientId: params?.patientId,
+                    })
+                  );
+                }}
               />
             </div>
 

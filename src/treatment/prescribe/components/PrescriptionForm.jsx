@@ -16,6 +16,8 @@ import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import PrescriptionService from '@/service/prescription';
+import MedicationSchedule from '@/treatment/medication-schedule';
+import { FaPlus, FaSave } from 'react-icons/fa';
 
 const PrescriptionForm = () => {
   const navigate = useNavigate();
@@ -172,6 +174,8 @@ const PrescriptionForm = () => {
 
       console.log('prescriptionData: ', prescriptionData);
       await PrescriptionService.addPescription(prescriptionData);
+      setSelectedDrugs([]);
+      alert('Prescription added successfully');
     } catch (error) {
       console.error('Error submitting prescription:', error);
       alert('Có lỗi xảy ra khi lưu đơn thuốc');
@@ -263,11 +267,7 @@ const PrescriptionForm = () => {
                   </RHFSelect>
                 </Col>
                 <Col md={4}>
-                  <RHFSelect
-                    name="dosage"
-                    label="Liều lượng *"
-                    SelectProps={{ native: false }}
-                  >
+                  <RHFSelect name="dosage" label="Liều lượng *" SelectProps={{ native: false }}>
                     {dosageOptions.map((option) => (
                       <MenuItem key={option.value} value={option.label}>
                         {option.label}
@@ -351,7 +351,7 @@ const PrescriptionForm = () => {
                   <h5 className="mb-3">Thuốc đã kê ({selectedDrugs.length})</h5>
                   <Table responsive bordered hover>
                     <thead>
-                      <tr>
+                      <tr className='text-center'>
                         <th>Tên thuốc</th>
                         <th>Số lượng</th>
                         <th>Tần suất</th>
@@ -361,7 +361,7 @@ const PrescriptionForm = () => {
                     </thead>
                     <tbody>
                       {selectedDrugs?.map((drug, index) => (
-                        <tr key={index}>
+                        <tr key={index} className='text-center'>
                           <td>{drug.name}</td>
                           <td>{`${drug.quantity} ${drug.unit}`}</td>
                           <td>{drug.frequency}</td>
@@ -392,19 +392,26 @@ const PrescriptionForm = () => {
               <div className="d-flex justify-content-end gap-2">
                 <Button
                   variant="primary"
-                  onClick={onSubmit}
-                  disabled={isLoading || selectedDrugs.length === 0}
-                >
-                  {isLoading ? 'Đang lưu...' : 'Lưu đơn thuốc'}
-                </Button>
-                <Button
-                  variant="outline-primary"
                   type="button"
                   onClick={handleDrugSelect}
                   disabled={isLoading}
+                  className='d-flex align-items-center gap-1'
+
                 >
+                  <FaPlus/> 
                   Thêm thuốc
                 </Button>
+
+                <Button
+                  variant="outline-primary"
+                  onClick={onSubmit}
+                  disabled={isLoading || selectedDrugs.length === 0}
+                  className='d-flex align-items-center gap-1'
+                >
+                  <FaSave/>
+                  {isLoading ? 'Đang lưu...' : 'Lưu đơn thuốc'}
+                </Button>
+
                 <Button
                   variant="outline-secondary"
                   type="button"
@@ -417,6 +424,8 @@ const PrescriptionForm = () => {
             </Card.Body>
           </Card>
         </FormProvider>
+
+        {selectedDrugs.length > 0 && <MedicationSchedule selectedDrugs={selectedDrugs} />}
 
         <InteractionModal
           showInteractionModal={showInteractionModal}

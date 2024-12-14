@@ -3,8 +3,8 @@ import { API_URL } from '../treatment/common/constant';
 import { addIcon } from "@iconify/react";
 
 const PrescriptionService = {
-    getByPatient: async (patientId) => {
-        return await axios.get(`${API_URL}/api/prescription/getByPatient`, {params: {patientId}})
+    getPrescriptionByPatient: async (patientId) => {
+        return await axios.get(`${API_URL}/api/prescription/list/${patientId}`)
     },
 
     getById: async (id) => {
