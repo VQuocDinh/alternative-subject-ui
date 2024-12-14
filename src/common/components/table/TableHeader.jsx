@@ -1,7 +1,7 @@
 const TableHeader = ({ header }) => {
   return (
     <thead>
-      <tr>
+      <tr className="text-center">
         {header.map((col, index) => (
           <th key={index}>{col}</th>
         ))}

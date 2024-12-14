@@ -29,14 +29,19 @@ const MiniSidebar = () => {
       //   includes: 'diagnosis',
       // },
       {
-        label: 'Chuẩn đoán bệnh',
+        label: 'Chẩn đoán bệnh',
         path: PATH_DASHBOARD.treatment.diagnosis,
         includes: 'investigation',
       },
       {
-        label: 'Kê đơn thuốc',
+        label: 'Đơn thuốc',
         path: PATH_DASHBOARD.treatment.prescription,
         includes: 'prescription',
+      },
+      {
+        label: 'Kê đơn thuốc',
+        path: PATH_DASHBOARD.treatment.prescribe,
+        includes: 'prescribe',
       },
     ],
     []

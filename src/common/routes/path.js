@@ -72,7 +72,9 @@ export const PATH_DASHBOARD = {
       '/treatment/:patientId/:medicalRecordId/prescription-history/:prescriptionHistoryId'
     ),
     prescription: path(ROOT_DASHBOARD, '/treatment/:patientId/:medicalRecordId/prescription'),
+    prescribe: path(ROOT_DASHBOARD, '/treatment/:patientId/:medicalRecordId/prescribe'),
     detailPrescription: path(ROOT_DASHBOARD, '/treatment/:patientId/prescription/:prescriptionId'),
+    scheduleMedicine: path(ROOT_DASHBOARD, '/treatment/:patientId/prescription/:prescriptionId/schedule'),
   },
   prescription: {
     root: path(ROOT_DASHBOARD, '/prescription'),

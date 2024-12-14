@@ -32,8 +32,6 @@ const PatientInfo = () => {
     fetchPatientInfo();
   }, []);
 
-  console.log('Patient:', patient);
-
   return (
     <Page>
       <div className="w-100 justify-content-center align-items-center">
