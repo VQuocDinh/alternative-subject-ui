@@ -3,7 +3,6 @@ import logo from '../../../assets/image/logo-no-bgr.png';
 import { useNavigate } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
-import { logoutSelector, userSelector, setLogout } from '../../auth/auth.slice';
 
 import './Navbar.scss';
 import { PATH_DASHBOARD } from '../../routes/path';
