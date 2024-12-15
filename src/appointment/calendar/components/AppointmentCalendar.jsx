@@ -14,6 +14,7 @@ import { useSelector } from 'react-redux';
 import Page from '@/common/components/Page';
 import CalendarForm from './CalendarForm';
 import axiosInstance from '@/common/utils/axios';
+import { userIdSelector } from '@/auth/auth.slice';
 
 const selectedEventSelector = (state) => {
   const { events, selectedEventId } = state.calendar;
@@ -31,12 +32,14 @@ const AppointmentCalendar = () => {
   const [availabilityEvents, setAvailabilityEvents] = useState([]);
   const selectedEvent = useSelector(selectedEventSelector);
   const { isOpenModal, selectedRange } = useSelector((state) => state.calendar);
+  const userId = useSelector(userIdSelector);
 
   useEffect(() => {
     fetchDoctorAvailability();
   }, [date, view]);
 
   const fetchDoctorAvailability = async () => {
+    if (!userId) return;
     try {
       const start = new Date(date);
       const end = new Date(date);
@@ -45,7 +48,7 @@ const AppointmentCalendar = () => {
         end.setDate(end.getDate() + (6 - end.getDay()));
       }
       const response = await axiosInstance.get(
-        `http://localhost:8080/api/doctor/1/availability/between?start_time=${start.toISOString()}&end_time=${end.toISOString()}`
+        `http://localhost:8080/api/doctor/${userId}/availability/between?start_time=${start.toISOString()}&end_time=${end.toISOString()}`
       );
       const events = response.data.metadata.map((item) => ({
         id: item.id,

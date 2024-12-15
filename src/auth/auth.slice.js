@@ -40,5 +40,6 @@ export const logoutSelector = (state) => state.authLogin.isAuthenticated;
 export const accessTokenSelector = (state) => state.authLogin.accessToken;
 export const refreshTokenSelector = (state) => state.authLogin.refreshToken;
 export const userSelector = (state) => state.authLogin.user;
+export const userIdSelector = (state) => state.authLogin.user?.userId;
 
 export default authLoginSlice.reducer;

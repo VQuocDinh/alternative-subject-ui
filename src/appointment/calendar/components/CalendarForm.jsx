@@ -10,7 +10,7 @@ import { API_DOCTOR_AVAILABILITY } from '@/common/constant/common.constant';
 import { LocalizationProvider, MobileDateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
-import { userSelector } from '@/auth/auth.slice';
+import { userIdSelector, userSelector } from '@/auth/auth.slice';
 
 // Define Yup schema
 const validationSchema = yup.object().shape({
@@ -32,7 +32,7 @@ const getInitialValues = (event, range) => {
 const CalendarForm = ({ event, range, onCancel, onRefresh }) => {
   const dispatch = useDispatch();
   const user = useSelector(userSelector);
-  const userId = user?.id || '';
+  const userId = useSelector(userIdSelector);
   const userRole = user?.role || '';
   const methods = useForm({
     resolver: yupResolver(validationSchema),
