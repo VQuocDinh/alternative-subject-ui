@@ -4,51 +4,36 @@ import { Badge, Button, Card, Col, Row, Table } from 'react-bootstrap';
 import { FaArrowLeft, FaCalendar, FaEdit, FaPrint } from 'react-icons/fa';
 import MiniSidebar from '../common/components/MiniSidebar';
 import { PATH_DASHBOARD } from '@/common/routes/path';
+import axiosInstance from '@/common/utils/axios';
+import { API_PRESCRIPTION } from '@/common/constant/common.constant';
+import { useEffect, useState } from 'react';
+import { replacePathParams } from '@/common/utils/common.utils';
 
-const DetailPrescriptionHistory = () => {
-  const { id } = useParams();
+const PrescriptionDetail = () => {
+  const params = useParams();
   const navigate = useNavigate();
+  const [prescriptionData, setPrescriptionData] = useState(null);
+  const [patientInfor, setPatientInfor] = useState(null);
+  const [doctorInfor, setDoctorInfor] = useState(null);
 
-  const prescriptionData = {
-    id: id,
-    patientInfo: {
-      name: 'Nguyễn Văn A',
-      age: 35,
-      gender: 'Nam',
-      medicalRecordId: 'BN001',
-      diagnosis: 'Viêm họng cấp',
-    },
-    doctorInfo: {
-      name: 'Bs. Nguyễn Văn An',
-      department: 'Khoa Nội',
-      licenseNumber: 'CMD001',
-    },
-    prescriptionInfo: {
-      date: '2024-03-15 09:30:00',
-      status: 'Đã kê đơn',
-      note: 'Uống thuốc sau bữa ăn, mỗi ngày 3 lần',
-    },
-    medications: [
-      {
-        id: 1,
-        name: 'Paracetamol',
-        dosage: '500mg',
-        quantity: 20,
-        frequency: '3 lần/ngày',
-        duration: '7 ngày',
-        instructions: 'Uống sau ăn',
-      },
-      {
-        id: 2,
-        name: 'Amoxicillin',
-        dosage: '500mg',
-        quantity: 30,
-        frequency: '2 lần/ngày',
-        duration: '10 ngày',
-        instructions: 'Uống trước ăn 30 phút',
-      },
-    ],
-  };
+  useEffect(() => {
+    const fetchPresciptionDetail = async () => {
+      try {
+        const response = await axiosInstance.get(`${API_PRESCRIPTION}/${params?.prescriptionId}`)
+        const presciptionDetail = response?.data?.metadata
+        if(presciptionDetail) {
+          setPrescriptionData(presciptionDetail);
+          setPatientInfor(presciptionDetail.MedicalRecord?.Patient)
+          setDoctorInfor(presciptionDetail.Doctor)
+        }
+        console.log('response:', response)
+      } catch (error) {
+        console.error('Error fetching presciption detail:', error);
+        
+      }
+    };
+    fetchPresciptionDetail();
+  },[params?.prescriptionId])
 
   return (
     <div className="w-100 h-100 d-flex flex-row gap-3 ">
@@ -64,10 +49,18 @@ const DetailPrescriptionHistory = () => {
                   <Button variant="link" className="p-0 me-3" onClick={() => navigate(-1)}>
                     <FaArrowLeft className="text-primary" />
                   </Button>
-                  <h4 className="mb-0 text-primary">Đơn thuốc #{id}</h4>
+                  <h4 className="mb-0 text-primary">Đơn thuốc #{params?.prescriptionId}</h4>
                 </div>
                 <div>
-                  <Button variant="outline-success" className="me-2">
+                  <Button variant="outline-success" className="me-2" onClick={()=>{
+                    navigate(
+                      replacePathParams(PATH_DASHBOARD.treatment.scheduleMedicine, {
+                        patientId: params?.patientId,
+                        medicalRecordId: params?.medicalRecordId,
+                        prescriptionId: params?.prescriptionId
+                      })
+                    );
+                  }}>
                     <FaCalendar className="me-2" />
                     Lịch uống thuốc
                   </Button>
@@ -84,10 +77,10 @@ const DetailPrescriptionHistory = () => {
 
               <div className="mb-4">
                 <Badge bg="success" className="me-2">
-                  {prescriptionData.prescriptionInfo.status}
+                  {prescriptionData?.status}
                 </Badge>
                 <span className="text-muted">
-                  Ngày kê đơn: {prescriptionData.prescriptionInfo.date}
+                  Ngày kê đơn: {prescriptionData?.prescribed_at}
                 </span>
               </div>
 
@@ -98,23 +91,23 @@ const DetailPrescriptionHistory = () => {
                       <h5 className="card-title mb-3">Thông tin bệnh nhân</h5>
                       <div className="info-group mb-2">
                         <label className="text-muted">Họ và tên</label>
-                        <p className="mb-1 fw-bold">{prescriptionData.patientInfo.name}</p>
+                        <p className="mb-1 fw-bold">{patientInfor?.full_name}</p>
                       </div>
                       <div className="info-group mb-2">
-                        <label className="text-muted">Tuổi</label>
-                        <p className="mb-1">{prescriptionData.patientInfo.age}</p>
+                        <label className="text-muted">Ngày sinh</label>
+                        <p className="mb-1">{patientInfor?.dob}</p>
                       </div>
                       <div className="info-group mb-2">
                         <label className="text-muted">Giới tính</label>
-                        <p className="mb-1">{prescriptionData.patientInfo.gender}</p>
+                        <p className="mb-1">Nam</p>
                       </div>
                       <div className="info-group mb-2">
                         <label className="text-muted">Mã bệnh án</label>
-                        <p className="mb-1">{prescriptionData.patientInfo.medicalRecordId}</p>
+                        <p className="mb-1">{prescriptionData?.MedicalRecord?.id}</p>
                       </div>
                       <div className="info-group">
                         <label className="text-muted">Chẩn đoán</label>
-                        <p className="mb-0">{prescriptionData.patientInfo.diagnosis}</p>
+                        <p className="mb-0">Bệnh nặng</p>
                       </div>
                     </Card.Body>
                   </Card>
@@ -125,15 +118,15 @@ const DetailPrescriptionHistory = () => {
                       <h5 className="card-title mb-3">Thông tin bác sĩ</h5>
                       <div className="info-group mb-2">
                         <label className="text-muted">Bác sĩ kê đơn</label>
-                        <p className="mb-1 fw-bold">{prescriptionData.doctorInfo.name}</p>
+                        <p className="mb-1 fw-bold">{doctorInfor?.last_name} {doctorInfor?.first_name}</p>
                       </div>
                       <div className="info-group mb-2">
                         <label className="text-muted">Khoa</label>
-                        <p className="mb-1">{prescriptionData.doctorInfo.department}</p>
+                        <p className="mb-1">{doctorInfor?.Specializations?.name}</p>
                       </div>
                       <div className="info-group">
                         <label className="text-muted">Mã số bác sĩ</label>
-                        <p className="mb-0">{prescriptionData.doctorInfo.licenseNumber}</p>
+                        <p className="mb-0">{doctorInfor?.id}</p>
                       </div>
                     </Card.Body>
                   </Card>
@@ -156,15 +149,15 @@ const DetailPrescriptionHistory = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {prescriptionData.medications.map((med, index) => (
+                      {prescriptionData?.PrescriptionMedicines?.map((med, index) => (
                         <tr key={med.id}>
                           <td>{index + 1}</td>
-                          <td>{med.name}</td>
-                          <td>{med.dosage}</td>
-                          <td>{med.quantity}</td>
+                          <td>{med.Medicine?.name}</td>
+                          <td>{med.dosage}/lần</td>
+                          <td>{med.quantity} vĩ</td>
                           <td>{med.frequency}</td>
-                          <td>{med.duration}</td>
-                          <td>{med.instructions}</td>
+                          <td>{med.duration} ngày</td>
+                          <td>{med.instructions || 'N/A'}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -172,7 +165,7 @@ const DetailPrescriptionHistory = () => {
 
                   <div className="mt-4">
                     <h6 className="text-muted mb-2">Ghi chú</h6>
-                    <p className="mb-0">{prescriptionData.prescriptionInfo.note}</p>
+                    <p className="mb-0">{prescriptionData?.notes}</p>
                   </div>
                 </Card.Body>
               </Card>
@@ -184,4 +177,4 @@ const DetailPrescriptionHistory = () => {
   );
 };
 
-export default DetailPrescriptionHistory;
+export default PrescriptionDetail;

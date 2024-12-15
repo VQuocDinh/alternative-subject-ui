@@ -56,7 +56,7 @@ const TablePrescription = () => {
       medical_record_id: prescription.medical_record_id,
       doctor_name: `${prescription.Doctor?.first_name} ${prescription.Doctor?.last_name}`,
       prescribed_at: new Date(prescription.prescribed_at).toLocaleDateString('vi-VN'),
-      notes: prescription.notes,
+      notes: prescription.notes || 'N/A',
       status: (
         <span className={getPrescriptionStatusStyle(prescription.status)}>
           {prescription.status.toUpperCase()}
@@ -87,9 +87,10 @@ const TablePrescription = () => {
 
   const handleRowClick = (id) => {
     navigate(
-      replacePathParams(PATH_DASHBOARD.treatment.detailPrescriptionHistory, {
+      replacePathParams(PATH_DASHBOARD.treatment.detailPrescription, {
         patientId: params.patientId,
-        prescriptionHistoryId: id,
+        prescriptionId: id,
+        medicalRecordId: params.medicalRecordId
       })
     );
   };
@@ -127,7 +128,7 @@ const TablePrescription = () => {
                 </InputGroup>
               </Col>
             </Row>
-
+            {console.log('currentPresciption: ', currentPresciption)}
             <div className="table-container">
               <TableContainer
                 headerMapping={headerMapping}
@@ -141,6 +142,7 @@ const TablePrescription = () => {
                   navigate(
                     replacePathParams(PATH_DASHBOARD.treatment.prescribe, {
                       patientId: params?.patientId,
+                      medicalRecordId: params?.medicalRecordId,
                     })
                   );
                 }}

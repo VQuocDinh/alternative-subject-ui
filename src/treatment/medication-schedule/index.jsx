@@ -1,89 +1,66 @@
-// src/treatment/prescribe/components/MedicationSchedule.jsx
+// src/treatment/medication-schedule/index.jsx
 import { useState, useEffect } from 'react';
-import { Card, Table, Badge, Row, Col, Button } from 'react-bootstrap';
-import { format } from 'date-fns';
+import { Card, Table, Badge, Row, Col, Button, Form } from 'react-bootstrap';
+import { format, isSameDay } from 'date-fns';
 import vi from 'date-fns/locale/vi';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import { FaFilePdf } from 'react-icons/fa';
+import { FaFilePdf, FaBell, FaCheck } from 'react-icons/fa';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
-const mockSelectedDrugs = [
-  {
-    name: 'Paracetamol',
-    dosage: '500mg',
-    frequency: 'Ngày 3 lần',
-    instructions: 'Uống sau khi ăn',
-    route: 'Uống',
-  },
-  {
-    name: 'Amoxicillin',
-    dosage: '250mg',
-    frequency: 'Ngày 2 lần',
-    instructions: 'Uống trước bữa ăn',
-    route: 'Uống',
-  },
-  {
-    name: 'Vitamin C',
-    dosage: '1000mg',
-    frequency: 'Ngày 1 lần',
-    instructions: 'Uống vào buổi sáng',
-    route: 'Uống',
-  },
-];
-const MedicationSchedule = ({ selectedDrugs = mockSelectedDrugs }) => {
+const MedicationSchedule = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [scheduleData, setScheduleData] = useState([]);
+  const [scheduleData, setScheduleData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const { prescriptionId } = useParams();
 
-  // Tạo lịch uống thuốc dựa trên đơn thuốc
+  // Fetch medication schedules
   useEffect(() => {
-    if (selectedDrugs.length > 0) {
-      generateSchedule(selectedDrugs, selectedDate);
-    }
-  }, [selectedDrugs, selectedDate]);
+    fetchSchedules(selectedDate);
+  }, [selectedDate]);
 
-  const generateSchedule = (drugs, date) => {
-    const schedule = [];
-    const timeSlots = {
-      'Trước bữa sáng': '06:00',
-      'Sau bữa sáng': '07:30',
-      'Trước bữa trưa': '11:00',
-      'Sau bữa trưa': '12:30',
-      'Trước bữa tối': '17:00',
-      'Sau bữa tối': '18:30',
-      'Trước khi ngủ': '21:00',
-    };
-
-    console.log('drugs: ', drugs);
-
-    drugs.forEach((drug) => {
-      const times = getTimesFromFrequency(drug.frequency);
-      times.forEach((time) => {
-        schedule.push({
-          time: timeSlots[time],
-          drugName: drug.name,
-          dosage: drug.dosage,
-          instructions: drug.instructions,
-          timing: time,
-          route: drug.route,
-          status: 'pending',
-        });
+  const fetchSchedules = async (date) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`/api/medication-schedules`, {
+        params: {
+          date: format(date, 'yyyy-MM-dd'),
+          prescriptionId,
+        },
       });
-    });
-
-    // Sắp xếp theo thời gian
-    schedule.sort((a, b) => a.time.localeCompare(b.time));
-    console.log('schedules: ', schedule);
-    setScheduleData(schedule);
+      if (response?.data) {
+        console.log('response: ', response);
+        setScheduleData(response.data?.metadata);
+      }
+    } catch (error) {
+      console.error('Error fetching schedules:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const getTimesFromFrequency = (frequency) => {
-    const frequencyMap = {
-      '1 lần/ngày': ['Sau bữa sáng'],
-      '2 lần/ngày': ['Sau bữa sáng', 'Sau bữa tối'],
-      '3 lần/ngày': ['Sau bữa sáng', 'Sau bữa trưa', 'Sau bữa tối'],
-      '4 lần/ngày': ['Trước bữa sáng', 'Trước bữa trưa', 'Trước bữa tối', 'Trước khi ngủ'],
-    };
-    return frequencyMap[frequency] || [];
+  const handleMarkAsTaken = async (scheduleId) => {
+    try {
+      await axios.patch(`/api/medication-schedules/${scheduleId}`, {
+        status: 'completed',
+        taken_time: new Date().toISOString(),
+      });
+      fetchSchedules(selectedDate);
+    } catch (error) {
+      console.error('Error updating schedule:', error);
+    }
+  };
+
+  const handleToggleReminder = async (scheduleId, enabled) => {
+    try {
+      await axios.patch(`/api/presciption/medication-schedules/${scheduleId}`, {
+        reminder_enabled: enabled,
+      });
+      fetchSchedules(selectedDate);
+    } catch (error) {
+      console.error('Error updating reminder:', error);
+    }
   };
 
   const getStatusBadge = (status) => {
@@ -95,41 +72,51 @@ const MedicationSchedule = ({ selectedDrugs = mockSelectedDrugs }) => {
     return badges[status];
   };
 
-  const handleMarkAsTaken = (index) => {
-    const newSchedule = [...scheduleData];
-    newSchedule[index].status = 'completed';
-    setScheduleData(newSchedule);
-  };
+  const exportSchedule = async () => {
+    try {
+      const response = await axios.get('/api/medication-schedules/export', {
+        params: {
+          date: format(selectedDate, 'yyyy-MM-dd'),
+        },
+        responseType: 'blob',
+      });
 
-  const exportSchedule = () => {
-    // Logic xuất lịch uống thuốc (PDF hoặc Excel)
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute(
+        'download',
+        `medication-schedule-${format(selectedDate, 'dd-MM-yyyy')}.pdf`
+      );
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error('Error exporting schedule:', error);
+    }
   };
 
   return (
-    <Card className="mb-4 mt-5">
-      <Card.Header className="d-flex justify-content-between align-items-center p-3">
+    <Card className="mb-4">
+      <Card.Header className="d-flex justify-content-between align-items-center">
         <h5 className="mb-0">Lịch uống thuốc</h5>
         <Button
           variant="outline-primary"
-          size="sm"
           onClick={exportSchedule}
-          className="d-flex align-items-center gap-1"
+          className="d-flex align-items-center gap-2"
         >
           <FaFilePdf />
-          Xuất lịch uống thuốc
+          Xuất PDF
         </Button>
       </Card.Header>
       <Card.Body>
         <Row>
           <Col md={4}>
-            <div className="mb-4">
-              <Calendar
-                onChange={setSelectedDate}
-                value={selectedDate}
-                locale={vi}
-                className="w-100"
-              />
-            </div>
+            <Calendar
+              onChange={setSelectedDate}
+              value={selectedDate}
+              locale={vi}
+              className="w-100 mb-4"
+            />
             <Card className="bg-light">
               <Card.Body>
                 <h6>Chú thích</h6>
@@ -147,45 +134,45 @@ const MedicationSchedule = ({ selectedDrugs = mockSelectedDrugs }) => {
             </h6>
             <Table responsive bordered hover>
               <thead>
-                <tr className='text-center'>
+                <tr className="text-center">
                   <th>Thời gian</th>
                   <th>Tên thuốc</th>
                   <th>Liều lượng</th>
-                  <th>Cách dùng</th>
+                  <th>Hướng dẫn</th>
                   <th>Trạng thái</th>
                   <th>Thao tác</th>
                 </tr>
               </thead>
               <tbody>
-                {console.log('scheduleData: ', scheduleData)}
-                {scheduleData.map((item, index) => (
-                  <tr key={index} className='text-center'>
-                    <td>{item.time}</td>
-                    <td>{item.drugName}</td>
-                    <td>{item.dosage}</td>
+                {console.log('sheng', scheduleData)}
+                {scheduleData?.map((schedule) => (
+                  <tr key={schedule.id} className="text-center">
+                    <td>{format(new Date(schedule.schedule_time), 'HH:mm')}</td>
+                    <td>{schedule.PrescriptionMedicine.Medicine.name}</td>
+                    <td>{`${schedule.PrescriptionMedicine.dosage}`}</td>
                     <td>
-                      <small>
-                        {item.timing}
-                        <br />
-                        {item.route}
-                        {item.instructions && (
-                          <>
-                            <br />
-                            <i>{item.instructions}</i>
-                          </>
-                        )}
-                      </small>
+                      <small>{schedule.PrescriptionMedicine.instructions || 'N/A'}</small>
                     </td>
-                    <td>{getStatusBadge(item.status)}</td>
+                    <td>{getStatusBadge(schedule.status)}</td>
                     <td>
-                      <Button
-                        size="sm"
-                        variant={item.status === 'completed' ? 'success' : 'outline-primary'}
-                        onClick={() => handleMarkAsTaken(index)}
-                        disabled={item.status === 'completed'}
-                      >
-                        {item.status === 'completed' ? 'Đã uống' : 'Đánh dấu đã uống'}
-                      </Button>
+                      <div className="d-flex gap-2 justify-content-center">
+                        <Button
+                          size="sm"
+                          variant={schedule.status === 'completed' ? 'success' : 'outline-primary'}
+                          onClick={() => handleMarkAsTaken(schedule.id)}
+                          disabled={schedule.status === 'completed'}
+                        >
+                          <FaCheck className="me-1" />
+                          {schedule.status === 'completed' ? 'Đã uống' : 'Đánh dấu đã uống'}
+                        </Button>
+                        <Form.Check
+                          type="switch"
+                          id={`reminder-switch-${schedule.id}`}
+                          checked={schedule.reminder_enabled}
+                          onChange={(e) => handleToggleReminder(schedule.id, e.target.checked)}
+                          label={<FaBell />}
+                        />
+                      </div>
                     </td>
                   </tr>
                 ))}
