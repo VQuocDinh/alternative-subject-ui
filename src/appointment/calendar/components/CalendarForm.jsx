@@ -3,13 +3,14 @@ import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import FormProvider from '@/common/components/hook-form/FormProvider';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axiosInstance from '@/common/utils/axios';
 import { closeModal } from '../calendarSlice';
 import { API_DOCTOR_AVAILABILITY } from '@/common/constant/common.constant';
 import { LocalizationProvider, MobileDateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
+import { userSelector } from '@/auth/auth.slice';
 
 // Define Yup schema
 const validationSchema = yup.object().shape({
@@ -25,15 +26,14 @@ const getInitialValues = (event, range) => {
     end: range ? dayjs(range?.end) : dayjs(),
   };
 
-  // if (event || range) {
-  //   return merge({}, _event, event);
-  // }
-
   return _event;
 };
 
 const CalendarForm = ({ event, range, onCancel, onRefresh }) => {
   const dispatch = useDispatch();
+  const user = useSelector(userSelector);
+  const userId = user?.id || '';
+  const userRole = user?.role || '';
   const methods = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: getInitialValues(event, range),
@@ -42,19 +42,23 @@ const CalendarForm = ({ event, range, onCancel, onRefresh }) => {
   const { handleSubmit, reset, control } = methods;
 
   const onSubmit = async (data) => {
-    try {
-      await axiosInstance.post(API_DOCTOR_AVAILABILITY, {
-        doctor_id: 1,
-        day_of_week: data.start,
-        start_time: data.start,
-        end_time: data.end,
-        is_available: true,
-      });
-      dispatch(closeModal());
-      reset();
-      onRefresh();
-    } catch (error) {
-      console.error('Error submitting data:', error);
+    if (userRole === 'doctor') {
+      try {
+        await axiosInstance.post(API_DOCTOR_AVAILABILITY, {
+          doctor_id: userId,
+          day_of_week: data.start,
+          start_time: data.start,
+          end_time: data.end,
+          is_available: true,
+        });
+        dispatch(closeModal());
+        reset();
+        onRefresh();
+      } catch (error) {
+        console.error('Error submitting data:', error);
+      }
+    } else {
+      console.error('Only doctors can submit availability.');
     }
   };
 

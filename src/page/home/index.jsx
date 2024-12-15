@@ -1,9 +1,12 @@
 import { Button, Col, Container, Row } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import './index.scoped.scss';
 import HealthIcon from '../../assets/icons/health';
 import Footer from './components/Footer';
 import doctorImg from '../../assets/image/doctor.png';
+
 const Home = () => {
+  const navigate = useNavigate();
 
   const services = [
     {
@@ -22,6 +25,11 @@ const Home = () => {
       iconColor: '#FFD700',
     },
   ];
+
+  const handleBookAppointment = () => {
+    navigate('/dashboard/appointment/add');
+  };
+
   return (
     <Container className="p-5">
       <Row className="mt-5">
@@ -33,7 +41,9 @@ const Home = () => {
           </p>
 
           <div className="d-flex gap-3 mt-4">
-            <Button variant="primary">Book Appointment</Button>
+            <Button variant="primary" onClick={handleBookAppointment}>
+              Book Appointment
+            </Button>
             <Button variant="outline-primary">Learn More</Button>
           </div>
         </Col>
