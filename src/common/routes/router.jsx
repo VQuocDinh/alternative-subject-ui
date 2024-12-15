@@ -26,7 +26,7 @@ const AppointmentCalendar = lazy(() => import('../../appointment/calendar'));
 
 const AppoimentAdd = lazy(() => import('../../appointment/add'));
 // Lazy loaded components
-const LoginSignUp = lazy(() => import('../../page/login/LoginSignup'));
+const LoginSignUp = lazy(() => import('../../auth/LoginSignup'));
 
 // Management patient
 const ListPatient = lazy(() => import('../../manage-patient/list'));
