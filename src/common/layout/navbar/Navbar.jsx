@@ -38,7 +38,7 @@ const Nav = () => {
   const navItems = [
     { label: 'Dashboard', route: PATH_DASHBOARD.overview.root },
     { label: 'Treatment', route: PATH_DASHBOARD.treatment.common },
-    { label: 'Appointments', route: PATH_DASHBOARD.appointment.root },
+    { label: 'Appointments', route: PATH_DASHBOARD.appointment.calendar },
     { label: 'Patient', route: PATH_DASHBOARD.manage_patient.list },
     { label: 'Prescription', route: PATH_DASHBOARD.prescription.list },
   ];
@@ -59,15 +59,18 @@ const Nav = () => {
             <span className="navbar-toggler-icon"></span>
           </button>
 
-          <div className="d-flex justify-content-between collapse navbar-collapse" id="navbarTogglerDemo01">
-            <div className='d-flex'>
+          <div
+            className="d-flex justify-content-between collapse navbar-collapse"
+            id="navbarTogglerDemo01"
+          >
+            <div className="d-flex">
               <img
                 onClick={() => navigate(PATH_DASHBOARD.overview.root)}
                 className="nav__logo me-3"
                 src={logo}
                 alt="navbar logo"
               />
-  
+
               <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                 {navItems.map((item, index) => (
                   <li className="nav-item" key={index}>

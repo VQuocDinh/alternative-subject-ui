@@ -22,6 +22,7 @@ const withRoutes = (routes) => {
   };
 };
 const DoctorAvailability = lazy(() => import('../../appointment/da'));
+const AppointmentCalendar = lazy(() => import('../../appointment/calendar'));
 
 const AppoimentAdd = lazy(() => import('../../appointment/add'));
 // Lazy loaded components
@@ -163,6 +164,10 @@ const routes = [
           {
             path: PATH_DASHBOARD.appointment.da,
             element: <DoctorAvailability />,
+          },
+          {
+            path: PATH_DASHBOARD.appointment.calendar,
+            element: <AppointmentCalendar />,
           },
         ],
       },
