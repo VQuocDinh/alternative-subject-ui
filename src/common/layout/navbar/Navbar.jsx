@@ -1,31 +1,24 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import logo from '../../../assets/image/logo-no-bgr.png';
 import { useNavigate } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa';
+import { useSelector, useDispatch } from 'react-redux';
 
 import './Navbar.scss';
 import { PATH_DASHBOARD } from '../../routes/path';
+import { logoutSelector, setLogout, userSelector } from '@/auth/auth.slice';
 
 const Nav = () => {
   const navigate = useNavigate();
-  const [token, setToken] = useState('');
-  const [userRole, setUserRole] = useState('');
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector(logoutSelector);
+  const userRole = useSelector(userSelector)?.role || '';
   const [isSelected, setIsSelected] = useState('Home');
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedRole = localStorage.getItem('userRole');
-    if (storedToken) {
-      setToken(storedToken);
-      setUserRole(storedRole);
-    }
-  }, []);
 
   const handleLogout = () => {
     const confirmed = window.confirm('Are you sure you want to log out?');
     if (confirmed) {
-      localStorage.removeItem('token');
-      setToken('');
+      dispatch(setLogout());
       navigate('/auth/login');
     }
   };
@@ -87,7 +80,7 @@ const Nav = () => {
               </ul>
             </div>
 
-            {!token ? (
+            {!isAuthenticated ? (
               <div className="login">
                 <button onClick={() => navigate('/')} className="me-3">
                   Login
