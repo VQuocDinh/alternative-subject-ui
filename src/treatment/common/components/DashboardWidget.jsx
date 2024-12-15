@@ -28,12 +28,12 @@ const DashboardWidgets = () => {
         const response = await axiosInstance.get(API_MEDICAL_RECORDS_STATUSES_COUNT);
         const { metadata } = response.data;
         setData({
-          registeredPatients: 3,
+          registeredPatients: metadata.registered || 0,
           nursesHandling: metadata.nurse_received || 0,
           doctorsHandling: metadata.doctor_received || 0,
           patientsWaitingForTests: metadata.waiting_lab || 0,
-          patientsBilling: 0,
-          completedPatients: 0,
+          patientsBilling: metadata.waiting_payment || 0,
+          completedPatients: metadata.completed || 0,
         });
       } catch (error) {
         console.error('Error fetching data:', error);

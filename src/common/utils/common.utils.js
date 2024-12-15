@@ -81,10 +81,8 @@ export const formatDateTime = (dateTime) => {
 
 export const getPrescriptionStatusStyle = (status) => {
   switch (status) {
-    case 'new': return 'text-primary';
-    case 'pending_comfirmation': return 'text-success'
-    case 'confirmed' : return 'text-secondary'
-    case 'completed': return 'text-info';
+    case 'active': return 'text-primary';
+    case 'completed': return 'text-success';
     case 'cancelled': return 'text-danger';
     default: return 'text-default';
   }

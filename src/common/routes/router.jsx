@@ -122,6 +122,10 @@ const routes = [
             element: <PrescriptionContainer />,
           },
           {
+            path: PATH_DASHBOARD.treatment.detailPrescription,
+            element: <DetailPrescriptionHistoryContainer />,
+          },
+          {
             path: PATH_DASHBOARD.treatment.scheduleMedicine,
             element: <ScheduleMedicine />,
           },
