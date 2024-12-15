@@ -106,7 +106,8 @@ const AppointmentCalendar = () => {
       const calendarApi = calendarEl.getApi();
       calendarApi.unselect();
     }
-    dispatch(selectRange(arg.start, arg.end));
+    console.log('arg', arg);
+    dispatch(selectRange({ start: arg.start.toISOString(), end: arg.end.toISOString() }));
   };
 
   const handleSelectEvent = (arg) => {
@@ -178,8 +179,10 @@ const AppointmentCalendar = () => {
             eventClick={handleSelectEvent}
             eventResize={handleResizeEvent}
             height={'auto'}
+            slotMinTime="07:00:00"
+            slotMaxTime="17:00:00"
             plugins={[listPlugin, dayGridPlugin, timelinePlugin, timeGridPlugin, interactionPlugin]}
-            locale="vi" // Set the locale to Vietnamese
+            locale="vi"
             buttonText={{
               today: 'Hôm nay',
               month: 'Tháng',
@@ -197,7 +200,7 @@ const AppointmentCalendar = () => {
             event={selectedEvent || {}}
             range={selectedRange}
             onCancel={handleCloseModal}
-            onRefresh={fetchDoctorAvailability} // Pass the onRefresh function
+            onRefresh={fetchDoctorAvailability}
           />
         </Dialog>
       </Container>
