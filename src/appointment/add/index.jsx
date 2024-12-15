@@ -147,8 +147,7 @@ const AppointmentAdd = () => {
 
     const fetchDoctors = async () => {
       try {
-        const response = await axios.get(`${baseUrl}/api/doctor/getDoctorBySpecialization`, {
-          params: { specialization_id: selectedSpecialization },
+        const response = await axios.get(`${baseUrl}/api/doctor/specialization/${selectedSpecialization}`, {
         });
         setStaffList(response.data.metadata);
       } catch (error) {
