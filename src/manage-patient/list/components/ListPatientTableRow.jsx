@@ -2,10 +2,13 @@ import { TableRow, TableCell, Box, MenuItem } from '@mui/material';
 import { useState } from 'react';
 import TableMoreMenu from '../../../common/components/mui-table/TableMoreMenu';
 import Iconify from '../../../common/components/Iconify';
-import { calculateAge } from '../../../common/utils/common.utils';
+import { calculateAge, replacePathParams } from '../../../common/utils/common.utils';
+import { useNavigate } from 'react-router-dom';
+import { PATH_DASHBOARD } from '@/common/routes/path';
 
 const ListPatientTableRow = ({ patient, onDeleteRow, onEditRow }) => {
   const [openMenu, setOpenMenuActions] = useState(null);
+  const navigate = useNavigate();
 
   const handleOpenMenu = (event) => {
     setOpenMenuActions(event.currentTarget);
@@ -20,7 +23,7 @@ const ListPatientTableRow = ({ patient, onDeleteRow, onEditRow }) => {
       <TableRow>
         <TableCell align="center">{patient?.id}</TableCell>
         <TableCell align="center">{patient?.full_name}</TableCell>
-        <TableCell align="center">{calculateAge(patient?.dob)}</TableCell>
+        <TableCell align="center">{patient?.dob ? calculateAge(patient?.dob) : ''}</TableCell>
         <TableCell align="center">{patient?.phone}</TableCell>
         <TableCell align="center">{patient?.email}</TableCell>
         <TableCell align="center">{new Date(patient?.created_at).toLocaleString()}</TableCell>
@@ -44,7 +47,11 @@ const ListPatientTableRow = ({ patient, onDeleteRow, onEditRow }) => {
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
-                    onEditRow();
+                    navigate(
+                      replacePathParams(PATH_DASHBOARD.manage_patient.edit, {
+                        id: patient?.id || 0,
+                      })
+                    );
                     handleCloseMenu();
                   }}
                 >

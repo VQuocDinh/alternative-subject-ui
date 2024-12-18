@@ -35,6 +35,7 @@ const LoginOAuth = lazy(() => import('../../oauth/component/Login')); // Lazy lo
 // Management patient
 const ListPatient = lazy(() => import('../../manage-patient/list'));
 const AddPatient = lazy(() => import('../../manage-patient/add-patient'));
+const EditPatient = lazy(() => import('../../manage-patient/edit-patient'));
 
 // Prescription
 // const Prescription = lazy(() => import('../../page/prescription'));
@@ -96,8 +97,8 @@ const routes = (isAuthenticated) => [
             element: <AddPatient />,
           },
           {
-            path: PATH_DASHBOARD.manage_patient.edit + '/:id',
-            element: <div>eit patient</div>,
+            path: PATH_DASHBOARD.manage_patient.edit,
+            element: <EditPatient />,
           },
         ],
       },
