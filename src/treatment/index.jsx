@@ -6,11 +6,15 @@ import { STATUSES_TREATMENT } from './common/constant';
 import { axiosInstance } from '../common/utils/axios';
 import { API_TREATMENT_RECORD } from '../common/constant/common.constant';
 import { MEDICAL_RECORD_STATUS } from '../common/constant/treatment.constant';
+import { useSelector } from '@/common/redux/store';
 
 const TreatmentCommonContainer = () => {
   const [patientList, setPatientList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const currentMedicalRecordStatus = useSelector(
+    (state) => state.treatment.currentMedicalRecordStatus
+  );
 
   const getPatientList = async () => {
     setIsLoading(true);
@@ -18,7 +22,9 @@ const TreatmentCommonContainer = () => {
     try {
       const response = await axiosInstance.get(API_TREATMENT_RECORD, {
         params: {
-          status: MEDICAL_RECORD_STATUS.ALL,
+          status: currentMedicalRecordStatus
+            ? currentMedicalRecordStatus
+            : MEDICAL_RECORD_STATUS.ALL,
         },
       });
       setPatientList(response.data?.metadata || []);
@@ -31,7 +37,7 @@ const TreatmentCommonContainer = () => {
 
   useEffect(() => {
     getPatientList();
-  }, []);
+  }, [currentMedicalRecordStatus]);
 
   return (
     <div className="w-75 d-flex flex-column gap-4 mx-auto" style={{ marginBottom: '100px' }}>
@@ -41,7 +47,7 @@ const TreatmentCommonContainer = () => {
       <Page>
         {' '}
         <div className="mt-4" style={{ paddingRight: '16px', paddingLeft: '16px' }}>
-          <h3 className="fw-bold">Danh sách bệnh án</h3>
+          <h3 className="fw-bold">Danh sách bệnh án theo trạng thái</h3>
           <PatientTable
             patients={patientList}
             isLoading={isLoading}
