@@ -13,6 +13,7 @@ export const PATH_AUTHENTICATION = {
   login: path(ROOT_AUTH, '/login'),
   logout: path(ROOT_AUTH, '/logout'),
   register: path(ROOT_AUTH, '/register'),
+  oauthLogin: path(ROOT_AUTH, '/oauth-login'), // New path for OAuth login
 };
 
 export const PATH_DASHBOARD = {
@@ -74,8 +75,14 @@ export const PATH_DASHBOARD = {
     ),
     prescription: path(ROOT_DASHBOARD, '/treatment/:patientId/:medicalRecordId/prescription'),
     prescribe: path(ROOT_DASHBOARD, '/treatment/:patientId/:medicalRecordId/prescribe'),
-    detailPrescription: path(ROOT_DASHBOARD, '/treatment/:patientId/:medicalRecordId/prescription/:prescriptionId'),
-    scheduleMedicine: path(ROOT_DASHBOARD, '/treatment/:patientId/:medicalRecordId/prescription/:prescriptionId/schedule'),
+    detailPrescription: path(
+      ROOT_DASHBOARD,
+      '/treatment/:patientId/:medicalRecordId/prescription/:prescriptionId'
+    ),
+    scheduleMedicine: path(
+      ROOT_DASHBOARD,
+      '/treatment/:patientId/:medicalRecordId/prescription/:prescriptionId/schedule'
+    ),
   },
   prescription: {
     root: path(ROOT_DASHBOARD, '/prescription'),
@@ -91,5 +98,8 @@ export const PATH_HOME = {
   prescription: {
     root: path(ROOT, '/prescription'),
     detail: path(ROOT, '/prescription/:id'),
+  },
+  appointment: {
+    root: path(ROOT, '/appointment'),
   },
 };

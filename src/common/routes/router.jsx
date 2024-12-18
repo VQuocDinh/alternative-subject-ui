@@ -1,11 +1,12 @@
 import { lazy, Suspense } from 'react';
-import { useRoutes } from 'react-router-dom';
+import { useRoutes, Navigate } from 'react-router-dom'; // Import Navigate
 import { PATH_AUTHENTICATION, PATH_DASHBOARD, PATH_HOME } from './path';
 import PatientPrescription from '../../page/patient-prescription';
 import HomeLayout from '../layout/HomeLayout';
 import Home from '../../page/home';
 import Dashboard from '../../page/dashboard';
 import './spinner.css'; // Import the CSS file for the spinner
+import { useSelector } from '../redux/store'; // Import useSelector
 
 const Spinner = () => (
   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -16,17 +17,17 @@ const Spinner = () => (
 // HOC tạo Router
 const withRoutes = (routes) => {
   return function RouterComponent() {
-    const routing = useRoutes(routes);
+    const isAuthenticated = useSelector((state) => state.oauth.isAuthenticated); // Get authentication state
+    const routing = useRoutes(routes(isAuthenticated)); // Call routes with isAuthenticated
 
     return <Suspense fallback={<Spinner />}>{routing}</Suspense>;
   };
 };
 const DoctorAvailability = lazy(() => import('../../appointment/da'));
 const AppointmentCalendar = lazy(() => import('../../appointment/calendar'));
-
 const AppoimentAdd = lazy(() => import('../../appointment/add'));
-// Lazy loaded components
 const LoginSignUp = lazy(() => import('../../auth/LoginSignup'));
+const OAuthContainer = lazy(() => import('../../oauth')); // Lazy load OAuthContainer
 
 // Management patient
 const ListPatient = lazy(() => import('../../manage-patient/list'));
@@ -55,7 +56,7 @@ const PrescriptionContainer = lazy(() => import('../../treatment/prescription'))
 const ScheduleMedicine = lazy(() => import('../../treatment/medication-schedule'));
 const DiagnosisContainer = lazy(() => import('../../treatment/diagnosis'));
 
-const routes = [
+const routes = (isAuthenticated) => [
   // auth
   {
     path: PATH_AUTHENTICATION.root,
@@ -66,6 +67,7 @@ const routes = [
         element: <div>logout</div>,
       },
       { path: PATH_AUTHENTICATION.register, element: <div>register</div> },
+      { path: PATH_AUTHENTICATION.oauthLogin, element: <OAuthContainer /> }, // New route for OAuth login
     ],
   },
 
@@ -189,11 +191,27 @@ const routes = [
       },
       {
         path: PATH_HOME.prescription.root,
-        element: <PatientPrescription />,
+        element: isAuthenticated ? (
+          <PatientPrescription />
+        ) : (
+          <Navigate to={PATH_AUTHENTICATION.oauthLogin} />
+        ),
       },
       {
         path: PATH_HOME.prescription.detail,
-        element: <PrescriptionDetail />,
+        element: isAuthenticated ? (
+          <PrescriptionDetail />
+        ) : (
+          <Navigate to={PATH_AUTHENTICATION.oauthLogin} />
+        ),
+      },
+      {
+        path: PATH_HOME.appointment.root,
+        element: isAuthenticated ? (
+          <AppointmentCalendar />
+        ) : (
+          <Navigate to={PATH_AUTHENTICATION.oauthLogin} />
+        ),
       },
     ],
   },

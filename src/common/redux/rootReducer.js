@@ -3,21 +3,23 @@ import storage from 'redux-persist/lib/storage';
 import commonReducer from './reducer/common.reducer';
 import treatmentReducer from '../../treatment/common/treatment.slice';
 import calendarReducer from '../../appointment/calendar/calendarSlice';
-import authLoginReducer from '../../auth/auth.slice';
+import authReducer from '../../auth/auth.slice'; // Updated import
+import oauthReducer from '../../oauth/oauth.slice'; // New import
 
 // ----------------------------------------------------------------------
 const rootPersistConfig = {
   key: 'root',
   storage,
   keyPrefix: 'redux-',
-  whitelist: ['authLogin', 'login'],
+  whitelist: ['auth', 'oauth'], // Updated whitelist
 };
 
 const rootReducer = combineReducers({
   common: commonReducer,
   treatment: treatmentReducer,
   calendar: calendarReducer,
-  authLogin: authLoginReducer,
+  auth: authReducer, // Updated reducer
+  oauth: oauthReducer, // New reducer
 });
 
 export { rootPersistConfig, rootReducer };

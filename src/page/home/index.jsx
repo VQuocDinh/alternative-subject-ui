@@ -4,7 +4,6 @@ import HealthIcon from '../../assets/icons/health';
 import Footer from './components/Footer';
 import doctorImg from '../../assets/image/doctor.png';
 const Home = () => {
-
   const services = [
     {
       title: 'Root Canal Treatment',
