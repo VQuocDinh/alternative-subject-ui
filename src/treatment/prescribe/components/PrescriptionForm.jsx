@@ -55,6 +55,10 @@ const PrescriptionForm = () => {
       .typeError('Thời gian điều trị phải là số'),
     route: Yup.string().required('Vui lòng chọn đường dùng'),
     timing: Yup.array().min(1, 'Vui lòng chọn it nhất 1 thời điểm dùng'),
+    startDate: Yup.date()
+    .nullable() // Allow null value
+    .transform((curr, orig) => orig === '' ? null : curr) // Transform empty string to null
+    .min(new Date(), 'Ngày bắt đầu không được nhỏ hơn ngày hiện tại'),
     instructions: Yup.string(),
     notes: Yup.string(),
   });
@@ -70,6 +74,7 @@ const PrescriptionForm = () => {
       duration: '',
       route: '',
       timing: [],
+      startDate:'',
       instructions: '',
       notes: '',
     },
@@ -328,9 +333,8 @@ const PrescriptionForm = () => {
 
                 <Col md={2}>
                   <RHFTextField
-                    name="duration"
-                    label="Ngày bắt đầu "
-                    type="number"
+                    name="startDate"
+                    type="date"
                     placeholder="Ngày bắt đầu"
                   />
                 </Col>
