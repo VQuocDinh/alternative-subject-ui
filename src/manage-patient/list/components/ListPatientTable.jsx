@@ -7,6 +7,9 @@ import {
   FormControlLabel,
   Switch,
   TablePagination,
+  TextField,
+  Button,
+  Stack,
 } from '@mui/material';
 import TableHeadCustom from '../../../common/components/mui-table/TableHeadCustom';
 import TableSkeleton from '../../../common/components/mui-table/TableSkeleton';
@@ -23,6 +26,7 @@ const ListPatientTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [dense, setDense] = useState(false);
+  const [searchParams, setSearchParams] = useState({ full_name: '', email: '' });
 
   const getPatientList = async () => {
     setIsLoading(true);
@@ -38,6 +42,29 @@ const ListPatientTable = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSearch = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await axiosInstance.post(`${API_PATIENT}/searchByNameAndEmail`, {
+        ...searchParams,
+        page: page + 1,
+        limit: rowsPerPage,
+      });
+      setPatientList(response?.data?.metadata?.data || []);
+    } catch (error) {
+      console.error('Error searching patients:', error);
+      setError(error?.message || 'Something went wrong!');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setSearchParams((prev) => ({ ...prev, [name]: value }));
   };
 
   useEffect(() => {
@@ -67,6 +94,29 @@ const ListPatientTable = () => {
 
   return (
     <Box>
+      <Stack width={'100%'} sx={{ display: 'flex', gap: 2, mb: 2 }}>
+        <Stack direction={'row'} width={'100%'} spacing={2}>
+          <TextField
+            label="Full Name"
+            width={'45%'}
+            name="full_name"
+            value={searchParams.full_name}
+            onChange={handleInputChange}
+          />
+          <TextField
+            label="Email"
+            width={'45%'}
+            name="email"
+            value={searchParams.email}
+            onChange={handleInputChange}
+          />
+        </Stack>
+        <Stack width={'20%'}>
+          <Button variant="contained" onClick={handleSearch}>
+            Search
+          </Button>
+        </Stack>
+      </Stack>
       <TableContainer sx={{ position: 'relative' }}>
         <Table size={dense ? 'small' : 'medium'}>
           <TableHeadCustom headLabel={HEAD_TABLE_PROPS} rowCount={patientList.length} />
