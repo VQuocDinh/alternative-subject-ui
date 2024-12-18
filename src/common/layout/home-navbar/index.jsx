@@ -3,21 +3,27 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import LogoIcon from '../../../assets/icons/logo';
 import { PATH_AUTHENTICATION, PATH_HOME } from '../../routes/path';
-import { clearAuthentication, selectIsAuthenticated } from '../../../oauth/oauth.slice';
+import {
+  clearAuthentication,
+  selectIsAuthenticated,
+  selectPatientId,
+} from '../../../oauth/oauth.slice';
 import './index.scoped.scss';
 import { FaUserCircle } from 'react-icons/fa';
 import { useDispatch } from '@/common/redux/store';
+import { replacePathParams } from '@/common/utils/common.utils';
 
 const HomeNavbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(selectIsAuthenticated);
+  const patientId = useSelector(selectPatientId);
 
   const handleBookNowClick = () => {
     if (!isAuthenticated) {
       navigate(PATH_AUTHENTICATION.oauthLogin);
     } else {
-      // Navigate to the booking page or perform the booking action
+      navigate(replacePathParams(PATH_HOME.appointment.booking, { patientId: patientId }));
     }
   };
 
@@ -36,7 +42,10 @@ const HomeNavbar = () => {
             <Nav.Link as={Link} to={PATH_HOME.prescription.root}>
               Prescriptions
             </Nav.Link>
-            <Nav.Link as={Link} to={PATH_HOME.prescription}>
+            <Nav.Link
+              as={Link}
+              to={replacePathParams(PATH_HOME.appointment.calendar, { patientId: patientId })}
+            >
               Appointment
             </Nav.Link>
           </Nav>

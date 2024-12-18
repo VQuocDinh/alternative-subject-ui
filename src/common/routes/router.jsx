@@ -24,9 +24,11 @@ const withRoutes = (routes) => {
   };
 };
 const DoctorAvailability = lazy(() => import('../../appointment/da'));
-const AppointmentCalendar = lazy(() => import('../../appointment/calendar'));
-const AppoimentAdd = lazy(() => import('../../appointment/add'));
+const DoctorScheduleContainer = lazy(() => import('../../appointment/calendar'));
 
+// Appointment for patient
+const AppointmentBooking = lazy(() => import('../../appointment/add'));
+const AppointmentCalendar = lazy(() => import('../../appointment/calendar-patient'));
 // Auth
 const LoginSignUp = lazy(() => import('../../auth/LoginSignup'));
 const OAuthContainer = lazy(() => import('../../oauth')); // Lazy load OAuthContainer
@@ -169,16 +171,12 @@ const routes = (isAuthenticated) => [
         path: PATH_DASHBOARD.appointment.root,
         children: [
           {
-            path: PATH_DASHBOARD.appointment.add,
-            element: <AppoimentAdd />,
-          },
-          {
             path: PATH_DASHBOARD.appointment.da,
             element: <DoctorAvailability />,
           },
           {
             path: PATH_DASHBOARD.appointment.calendar,
-            element: <AppointmentCalendar />,
+            element: <DoctorScheduleContainer />,
           },
         ],
       },
@@ -211,9 +209,17 @@ const routes = (isAuthenticated) => [
         ),
       },
       {
-        path: PATH_HOME.appointment.root,
+        path: PATH_HOME.appointment.calendar,
         element: isAuthenticated ? (
           <AppointmentCalendar />
+        ) : (
+          <Navigate to={PATH_AUTHENTICATION.oauthLogin} />
+        ),
+      },
+      {
+        path: PATH_HOME.appointment.booking,
+        element: isAuthenticated ? (
+          <AppointmentBooking />
         ) : (
           <Navigate to={PATH_AUTHENTICATION.oauthLogin} />
         ),

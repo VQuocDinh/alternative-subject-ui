@@ -102,5 +102,7 @@ export const PATH_HOME = {
   },
   appointment: {
     root: path(ROOT, '/appointment'),
+    booking: path(ROOT, '/appointment/:patientId/booking'),
+    calendar: path(ROOT, '/appointment/:patientId/calendar'),
   },
 };
