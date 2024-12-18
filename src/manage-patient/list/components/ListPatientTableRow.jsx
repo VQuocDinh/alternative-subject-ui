@@ -1,0 +1,63 @@
+import { TableRow, TableCell, Box, MenuItem } from '@mui/material';
+import { useState } from 'react';
+import TableMoreMenu from '../../../common/components/mui-table/TableMoreMenu';
+import Iconify from '../../../common/components/Iconify';
+import { calculateAge } from '../../../common/utils/common.utils';
+
+const ListPatientTableRow = ({ patient, onDeleteRow, onEditRow }) => {
+  const [openMenu, setOpenMenuActions] = useState(null);
+
+  const handleOpenMenu = (event) => {
+    setOpenMenuActions(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setOpenMenuActions(null);
+  };
+
+  return (
+    <>
+      <TableRow>
+        <TableCell align="center">{patient?.id}</TableCell>
+        <TableCell align="center">{patient?.full_name}</TableCell>
+        <TableCell align="center">{calculateAge(patient?.dob)}</TableCell>
+        <TableCell align="center">{patient?.phone}</TableCell>
+        <TableCell align="center">{patient?.email}</TableCell>
+        <TableCell align="center">{new Date(patient?.created_at).toLocaleString()}</TableCell>
+        <TableCell align="center">{new Date(patient?.updated_at).toLocaleString()}</TableCell>
+        <TableCell align="center">
+          <TableMoreMenu
+            open={openMenu}
+            onClose={handleCloseMenu}
+            onOpen={handleOpenMenu}
+            actions={
+              <Box width={'500px'} height={''}>
+                <MenuItem
+                  onClick={() => {
+                    onDeleteRow();
+                    handleCloseMenu();
+                  }}
+                  sx={{ color: 'error.main' }}
+                >
+                  <Iconify icon={'eva:trash-2-outline'} />
+                  Xóa
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    onEditRow();
+                    handleCloseMenu();
+                  }}
+                >
+                  <Iconify icon={'eva:edit-fill'} />
+                  Chỉnh sửa
+                </MenuItem>
+              </Box>
+            }
+          ></TableMoreMenu>
+        </TableCell>
+      </TableRow>
+    </>
+  );
+};
+
+export default ListPatientTableRow;

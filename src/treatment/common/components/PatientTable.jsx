@@ -55,7 +55,6 @@ const PatientTable = ({ patients, isLoading, isError }) => {
       <TableContainer sx={{ position: 'relative' }}>
         <Table size={dense ? 'small' : 'medium'}>
           <TableHeadCustom headLabel={HEAD_TABLE_PROPS} rowCount={patientList?.length} />
-
           <TableBody>
             {patientList?.map((row, index) => (
               <PatientTableRow
