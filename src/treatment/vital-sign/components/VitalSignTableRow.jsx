@@ -2,7 +2,7 @@ import { TableCell, TableRow, Box, MenuItem } from '@mui/material';
 import { useState } from 'react';
 import TableMoreMenu from '../../../common/components/mui-table/TableMoreMenu';
 import Iconify from '../../../common/components/Iconify';
-import axiosInstance from '@/common/utils/axios';
+import { axiosInstance } from '@/common/utils/axios';
 import { API_TREATMENT, API_TREATMENT_RECORD } from '@/common/constant/common.constant';
 import useToast from '@/common/hooks/useToast';
 import { useParams } from 'react-router-dom';

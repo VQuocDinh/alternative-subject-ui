@@ -3,7 +3,7 @@ import MiniSidebar from '../common/components/MiniSidebar';
 import PatientInfo from '../common/components/PatientInfo';
 import MedicalRecordTable from './components/medicalRecordTable';
 import { useEffect, useState } from 'react';
-import axiosInstance from '@/common/utils/axios';
+import { axiosInstance } from '@/common/utils/axios';
 import { API_TREATMENT_RECORD_BY_PATIENT } from '@/common/constant/common.constant';
 import { useParams } from 'react-router-dom';
 

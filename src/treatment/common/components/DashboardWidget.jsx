@@ -9,7 +9,7 @@ import {
   FaFileInvoiceDollar,
   FaCheck,
 } from 'react-icons/fa';
-import axiosInstance from '@/common/utils/axios';
+import { axiosInstance } from '@/common/utils/axios';
 import { API_MEDICAL_RECORDS_STATUSES_COUNT } from '@/common/constant/common.constant';
 
 const DashboardWidgets = () => {

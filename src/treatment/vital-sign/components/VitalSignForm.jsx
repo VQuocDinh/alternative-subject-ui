@@ -6,7 +6,7 @@ import RHFTextField from '../../../common/components/hook-form/RHFTextField';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import axiosInstance from '@/common/utils/axios';
+import { axiosInstance } from '@/common/utils/axios';
 import { API_TREATMENT_RECORD } from '@/common/constant/common.constant';
 import { useDispatch } from '@/common/redux/store';
 import useToast from '@/common/hooks/useToast';

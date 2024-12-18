@@ -4,7 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import FormProvider from '@/common/components/hook-form/FormProvider';
 import { useDispatch } from 'react-redux';
-import axiosInstance from '@/common/utils/axios';
+import { axiosInstance } from '@/common/utils/axios';
 import { closeModal } from '../calendarSlice';
 import { API_DOCTOR_AVAILABILITY } from '@/common/constant/common.constant';
 import { LocalizationProvider, MobileDateTimePicker } from '@mui/x-date-pickers';

@@ -12,7 +12,7 @@ import TableHeadCustom from '../../../common/components/mui-table/TableHeadCusto
 import TableSkeleton from '../../../common/components/mui-table/TableSkeleton';
 import TableNoData from '../../../common/components/mui-table/TableNoData';
 import VitalSignTableRow from './VitalSignTableRow'; // Import the table row component
-import axiosInstance from '@/common/utils/axios';
+import { axiosInstance } from '@/common/utils/axios';
 import { API_TREATMENT_RECORD } from '@/common/constant/common.constant';
 import { formatDateTime } from '@/common/utils/common.utils'; // Import the formatDate function
 import Page from '@/common/components/Page';

@@ -13,7 +13,7 @@ import { useDispatch } from '@/common/redux/store';
 import { useSelector } from 'react-redux';
 import Page from '@/common/components/Page';
 import CalendarForm from './CalendarForm';
-import axiosInstance from '@/common/utils/axios';
+import { axiosInstance } from '@/common/utils/axios';
 
 const selectedEventSelector = (state) => {
   const { events, selectedEventId } = state.calendar;

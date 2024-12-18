@@ -4,7 +4,7 @@ import { Badge, Button, Card, Col, Row, Table } from 'react-bootstrap';
 import { FaArrowLeft, FaCalendar, FaEdit, FaPrint } from 'react-icons/fa';
 import MiniSidebar from '../common/components/MiniSidebar';
 import { PATH_DASHBOARD } from '@/common/routes/path';
-import axiosInstance from '@/common/utils/axios';
+import { axiosInstance } from '@/common/utils/axios';
 import { API_PRESCRIPTION } from '@/common/constant/common.constant';
 import { useEffect, useState } from 'react';
 import { replacePathParams } from '@/common/utils/common.utils';
@@ -19,21 +19,20 @@ const PrescriptionDetail = () => {
   useEffect(() => {
     const fetchPresciptionDetail = async () => {
       try {
-        const response = await axiosInstance.get(`${API_PRESCRIPTION}/${params?.prescriptionId}`)
-        const presciptionDetail = response?.data?.metadata
-        if(presciptionDetail) {
+        const response = await axiosInstance.get(`${API_PRESCRIPTION}/${params?.prescriptionId}`);
+        const presciptionDetail = response?.data?.metadata;
+        if (presciptionDetail) {
           setPrescriptionData(presciptionDetail);
-          setPatientInfor(presciptionDetail.MedicalRecord?.Patient)
-          setDoctorInfor(presciptionDetail.Doctor)
+          setPatientInfor(presciptionDetail.MedicalRecord?.Patient);
+          setDoctorInfor(presciptionDetail.Doctor);
         }
-        console.log('response:', response)
+        console.log('response:', response);
       } catch (error) {
         console.error('Error fetching presciption detail:', error);
-        
       }
     };
     fetchPresciptionDetail();
-  },[params?.prescriptionId])
+  }, [params?.prescriptionId]);
 
   return (
     <div className="w-100 h-100 d-flex flex-row gap-3 ">
@@ -52,15 +51,19 @@ const PrescriptionDetail = () => {
                   <h4 className="mb-0 text-primary">Đơn thuốc #{params?.prescriptionId}</h4>
                 </div>
                 <div>
-                  <Button variant="outline-success" className="me-2" onClick={()=>{
-                    navigate(
-                      replacePathParams(PATH_DASHBOARD.treatment.scheduleMedicine, {
-                        patientId: params?.patientId,
-                        medicalRecordId: params?.medicalRecordId,
-                        prescriptionId: params?.prescriptionId
-                      })
-                    );
-                  }}>
+                  <Button
+                    variant="outline-success"
+                    className="me-2"
+                    onClick={() => {
+                      navigate(
+                        replacePathParams(PATH_DASHBOARD.treatment.scheduleMedicine, {
+                          patientId: params?.patientId,
+                          medicalRecordId: params?.medicalRecordId,
+                          prescriptionId: params?.prescriptionId,
+                        })
+                      );
+                    }}
+                  >
                     <FaCalendar className="me-2" />
                     Lịch uống thuốc
                   </Button>
@@ -79,9 +82,7 @@ const PrescriptionDetail = () => {
                 <Badge bg="success" className="me-2">
                   {prescriptionData?.status}
                 </Badge>
-                <span className="text-muted">
-                  Ngày kê đơn: {prescriptionData?.prescribed_at}
-                </span>
+                <span className="text-muted">Ngày kê đơn: {prescriptionData?.prescribed_at}</span>
               </div>
 
               <Row className="mb-4">
@@ -118,7 +119,9 @@ const PrescriptionDetail = () => {
                       <h5 className="card-title mb-3">Thông tin bác sĩ</h5>
                       <div className="info-group mb-2">
                         <label className="text-muted">Bác sĩ kê đơn</label>
-                        <p className="mb-1 fw-bold">{doctorInfor?.last_name} {doctorInfor?.first_name}</p>
+                        <p className="mb-1 fw-bold">
+                          {doctorInfor?.last_name} {doctorInfor?.first_name}
+                        </p>
                       </div>
                       <div className="info-group mb-2">
                         <label className="text-muted">Khoa</label>

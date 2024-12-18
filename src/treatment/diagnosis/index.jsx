@@ -18,7 +18,7 @@ import TableMoreMenu from '@/common/components/mui-table/TableMoreMenu';
 import Iconify from '@/common/components/Iconify';
 import ModalEditDiagnosis from './components/ModalEditDiagnosis';
 import { formatDateTime } from '@/common/utils/common.utils';
-import axiosInstance from '@/common/utils/axios';
+import { axiosInstance } from '@/common/utils/axios';
 import { API_MEDICAL_RECORDS } from '@/common/constant/common.constant';
 import { useParams } from 'react-router-dom';
 import useToast from '@/common/hooks/useToast';

@@ -1,6 +1,6 @@
 import Page from '../../../common/components/Page';
 import { useEffect, useState } from 'react';
-import axiosInstance from '../../../common/utils/axios';
+import { axiosInstance } from '../../../common/utils/axios';
 import { API_PATIENT } from '../../../common/constant/common.constant';
 import { useParams } from 'react-router-dom';
 

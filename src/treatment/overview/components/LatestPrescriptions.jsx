@@ -15,7 +15,7 @@ import {
   Card,
 } from '@mui/material';
 import { useState, useEffect } from 'react';
-import axiosInstance from '../../../common/utils/axios';
+import { axiosInstance } from '../../../common/utils/axios';
 import TableHeadCustom from '../../../common/components/mui-table/TableHeadCustom';
 import TableSkeleton from '../../../common/components/mui-table/TableSkeleton';
 import TableNoData from '../../../common/components/mui-table/TableNoData';

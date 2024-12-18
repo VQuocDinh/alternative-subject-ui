@@ -3,7 +3,7 @@ import Page from '../common/components/Page';
 import DashboardWidgets from './common/components/DashboardWidget';
 import PatientTable from './common/components/PatientTable';
 import { STATUSES_TREATMENT } from './common/constant';
-import axiosInstance from '../common/utils/axios';
+import { axiosInstance } from '../common/utils/axios';
 import { API_TREATMENT_RECORD } from '../common/constant/common.constant';
 import { MEDICAL_RECORD_STATUS } from '../common/constant/treatment.constant';
 

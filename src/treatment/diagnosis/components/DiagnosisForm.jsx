@@ -6,7 +6,7 @@ import RHFTextField from '../../../common/components/hook-form/RHFTextField';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import axiosInstance from '@/common/utils/axios';
+import { axiosInstance } from '@/common/utils/axios';
 import { API_MEDICAL_RECORDS, API_SEARCH_DISEASE } from '@/common/constant/common.constant';
 import useToast from '@/common/hooks/useToast';
 import { Autocomplete, TextField } from '@mui/material';

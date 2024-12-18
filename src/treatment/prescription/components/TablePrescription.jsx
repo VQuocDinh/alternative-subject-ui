@@ -7,7 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getPrescriptionStatusStyle, replacePathParams } from '../../../common/utils/common.utils';
 import { PATH_DASHBOARD } from '../../../common/routes/path';
 import Pagination from '../../../common/components/Pagination';
-import axiosInstance from '@/common/utils/axios';
+import { axiosInstance } from '@/common/utils/axios';
 import { API_PRESCRIPTION_LIST } from '@/common/constant/common.constant';
 
 const TablePrescription = () => {
@@ -90,7 +90,7 @@ const TablePrescription = () => {
       replacePathParams(PATH_DASHBOARD.treatment.detailPrescription, {
         patientId: params.patientId,
         prescriptionId: id,
-        medicalRecordId: params.medicalRecordId
+        medicalRecordId: params.medicalRecordId,
       })
     );
   };
