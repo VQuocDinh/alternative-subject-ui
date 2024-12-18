@@ -1,13 +1,9 @@
+import { axiosInstance } from '@/common/utils/axios';
+import ReportService from '@/service/report';
+import { API_URL } from '@/treatment/common/constant';
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Table,
-  Badge,
-  Button,
-} from 'react-bootstrap';
+import { Container, Row, Col, Card, Table, Badge, Button } from 'react-bootstrap';
 import {
   LineChart,
   Line,
@@ -19,19 +15,61 @@ import {
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell
+  Cell,
 } from 'recharts';
 
 const Dashboard = () => {
-  // States for different metrics
+  const [isLoading, setIsLoading] = useState(true);
+  const [visitDatas, setVisitData] = useState([]);
   const [statistics, setStatistics] = useState({
-    totalPatients: 0,
+    totalPatient: 0,
     todayAppointments: 0,
-    pendingPrescriptions: 0,
-    revenue: 0
+    totalDoctor: 0,
+    totalNurse: 0,
   });
 
-  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    const fetchStatistics = async () => {
+      try {
+        const response = await ReportService.getStatistics();
+
+        const { metadata } = response || {};
+        if (metadata) {
+          const {
+            totalPatient = 0,
+            totalAppointmentToday = 0,
+            totalDoctor = 0,
+            totalNurse = 0,
+          } = metadata;
+
+          setStatistics({
+            totalPatient,
+            totalAppointmentToday,
+            totalDoctor,
+            totalNurse,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchStatistics();
+  }, []);
+
+  useEffect(() => {
+    fetchVisitData();
+  }, []);
+
+  const fetchVisitData = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/report/statistics/monthly-visits`);
+      setVisitData(response.data);
+    } catch (error) {
+      console.error('Error fetching monthly visit data:', error);
+    }
+  };
 
   // Mock data for charts
   const visitData = [
@@ -40,7 +78,7 @@ const Dashboard = () => {
     { month: 'T3', visits: 450 },
     { month: 'T4', visits: 400 },
     { month: 'T5', visits: 380 },
-    { month: 'T6', visits: 520 }
+    { month: 'T6', visits: 520 },
   ];
 
   const departmentData = [
@@ -48,7 +86,7 @@ const Dashboard = () => {
     { name: 'Nhi khoa', value: 25 },
     { name: 'Da liễu', value: 20 },
     { name: 'Răng hàm mặt', value: 15 },
-    { name: 'Tai mũi họng', value: 5 }
+    { name: 'Tai mũi họng', value: 5 },
   ];
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
@@ -59,51 +97,30 @@ const Dashboard = () => {
       patientName: 'Nguyễn Văn A',
       time: '09:00',
       department: 'Nội khoa',
-      status: 'waiting'
+      status: 'waiting',
     },
     {
       id: 2,
       patientName: 'Trần Thị B',
       time: '09:30',
       department: 'Nhi khoa',
-      status: 'in-progress'
+      status: 'in-progress',
     },
     {
       id: 3,
       patientName: 'Lê Văn C',
       time: '10:00',
       department: 'Da liễu',
-      status: 'completed'
-    }
+      status: 'completed',
+    },
   ];
-
-  useEffect(() => {
-    // Fetch dashboard data
-    const fetchDashboardData = async () => {
-      try {
-        // API calls would go here
-        setStatistics({
-          totalPatients: 1250,
-          todayAppointments: 45,
-          pendingPrescriptions: 12,
-          revenue: 25000000
-        });
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchDashboardData();
-  }, []);
 
   const getStatusBadge = (status) => {
     const statusMap = {
-      'waiting': { variant: 'warning', text: 'Đang chờ' },
+      waiting: { variant: 'warning', text: 'Đang chờ' },
       'in-progress': { variant: 'primary', text: 'Đang khám' },
-      'completed': { variant: 'success', text: 'Hoàn thành' },
-      'cancelled': { variant: 'danger', text: 'Đã hủy' }
+      completed: { variant: 'success', text: 'Hoàn thành' },
+      cancelled: { variant: 'danger', text: 'Đã hủy' },
     };
     return statusMap[status] || { variant: 'secondary', text: 'Không xác định' };
   };
@@ -121,7 +138,7 @@ const Dashboard = () => {
                     Tổng số bệnh nhân
                   </div>
                   <div className="h5 mb-0 font-weight-bold text-gray-800">
-                    {statistics.totalPatients.toLocaleString()}
+                    {statistics.totalPatient?.toLocaleString()}
                   </div>
                 </div>
                 <div className="fa-2x text-gray-300">
@@ -141,7 +158,7 @@ const Dashboard = () => {
                     Lịch hẹn hôm nay
                   </div>
                   <div className="h5 mb-0 font-weight-bold text-gray-800">
-                    {statistics.todayAppointments}
+                    {statistics.totalAppointmentToday}
                   </div>
                 </div>
                 <div className="fa-2x text-gray-300">
@@ -158,10 +175,10 @@ const Dashboard = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <div>
                   <div className="text-xs font-weight-bold text-info text-uppercase mb-1">
-                    Đơn thuốc chờ xử lý
+                    Tổng số bác sĩ
                   </div>
                   <div className="h5 mb-0 font-weight-bold text-gray-800">
-                    {statistics.pendingPrescriptions}
+                    {statistics.totalDoctor}
                   </div>
                 </div>
                 <div className="fa-2x text-gray-300">
@@ -178,10 +195,10 @@ const Dashboard = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <div>
                   <div className="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                    Doanh thu tháng
+                    Tổng số nhân viên y tế
                   </div>
                   <div className="h5 mb-0 font-weight-bold text-gray-800">
-                    {statistics.revenue.toLocaleString()} đ
+                    {statistics.totalNurse.toLocaleString()}
                   </div>
                 </div>
                 <div className="fa-2x text-gray-300">
@@ -198,9 +215,7 @@ const Dashboard = () => {
         <Col lg={8} className="mb-4 mb-lg-0">
           <Card>
             <Card.Header className="py-3 d-flex justify-content-between align-items-center">
-              <h6 className="m-0 font-weight-bold text-primary">
-                Thống kê lượt khám theo tháng
-              </h6>
+              <h6 className="m-0 font-weight-bold text-primary">Thống kê lượt khám theo tháng</h6>
             </Card.Header>
             <Card.Body>
               <ResponsiveContainer width="100%" height={300}>
@@ -210,12 +225,7 @@ const Dashboard = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="visits"
-                    stroke="#0088FE"
-                    activeDot={{ r: 8 }}
-                  />
+                  <Line type="monotone" dataKey="visits" stroke="#0088FE" activeDot={{ r: 8 }} />
                 </LineChart>
               </ResponsiveContainer>
             </Card.Body>
@@ -225,9 +235,7 @@ const Dashboard = () => {
         <Col lg={4}>
           <Card>
             <Card.Header className="py-3">
-              <h6 className="m-0 font-weight-bold text-primary">
-                Phân bố theo khoa
-              </h6>
+              <h6 className="m-0 font-weight-bold text-primary">Phân bố theo khoa</h6>
             </Card.Header>
             <Card.Body>
               <ResponsiveContainer width="100%" height={300}>
@@ -240,15 +248,10 @@ const Dashboard = () => {
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
-                    label={({ name, percent }) =>
-                      `${name} ${(percent * 100).toFixed(0)}%`
-                    }
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                   >
                     {departmentData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
                   <Tooltip />
@@ -264,9 +267,7 @@ const Dashboard = () => {
         <Col lg={8} className="mb-4">
           <Card>
             <Card.Header className="py-3">
-              <h6 className="m-0 font-weight-bold text-primary">
-                Lịch hẹn gần đây
-              </h6>
+              <h6 className="m-0 font-weight-bold text-primary">Lịch hẹn gần đây</h6>
             </Card.Header>
             <Card.Body>
               <Table responsive hover>
@@ -286,24 +287,15 @@ const Dashboard = () => {
                       <td>{appointment.time}</td>
                       <td>{appointment.department}</td>
                       <td>
-                        <Badge
-                          bg={getStatusBadge(appointment.status).variant}
-                        >
+                        <Badge bg={getStatusBadge(appointment.status).variant}>
                           {getStatusBadge(appointment.status).text}
                         </Badge>
                       </td>
                       <td>
-                        <Button
-                          variant="outline-primary"
-                          size="sm"
-                          className="me-2"
-                        >
+                        <Button variant="outline-primary" size="sm" className="me-2">
                           <i className="fas fa-eye"></i>
                         </Button>
-                        <Button
-                          variant="outline-success"
-                          size="sm"
-                        >
+                        <Button variant="outline-success" size="sm">
                           <i className="fas fa-check"></i>
                         </Button>
                       </td>
@@ -312,9 +304,7 @@ const Dashboard = () => {
                 </tbody>
               </Table>
               <div className="text-center mt-3">
-                <Button variant="outline-primary">
-                  Xem tất cả lịch hẹn
-                </Button>
+                <Button variant="outline-primary">Xem tất cả lịch hẹn</Button>
               </div>
             </Card.Body>
           </Card>
@@ -323,14 +313,14 @@ const Dashboard = () => {
         <Col lg={4}>
           <Card>
             <Card.Header className="py-3">
-              <h6 className="m-0 font-weight-bold text-primary">
-                Thông báo mới
-              </h6>
+              <h6 className="m-0 font-weight-bold text-primary">Thông báo mới</h6>
             </Card.Header>
             <Card.Body>
               <div className="notification-item p-2 border-bottom">
                 <div className="d-flex align-items-center mb-1">
-                  <Badge bg="info" className="me-2">Mới</Badge>
+                  <Badge bg="info" className="me-2">
+                    Mới
+                  </Badge>
                   <small className="text-muted">10 phút trước</small>
                 </div>
                 <p className="mb-0">Bệnh nhân Nguyễn Văn A đã đặt lịch khám</p>
@@ -342,9 +332,7 @@ const Dashboard = () => {
                 <p className="mb-0">Cập nhật kết quả xét nghiệm cho bệnh nhân Trần B</p>
               </div>
               <div className="text-center mt-3">
-                <Button variant="outline-primary">
-                  Xem tất cả thông báo
-                </Button>
+                <Button variant="outline-primary">Xem tất cả thông báo</Button>
               </div>
             </Card.Body>
           </Card>
