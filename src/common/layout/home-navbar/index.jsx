@@ -3,11 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import LogoIcon from '../../../assets/icons/logo';
 import { PATH_AUTHENTICATION, PATH_HOME } from '../../routes/path';
-import { selectIsAuthenticated } from '../../../oauth/oauth.slice';
+import { clearAuthentication, selectIsAuthenticated } from '../../../oauth/oauth.slice';
 import './index.scoped.scss';
+import { FaUserCircle } from 'react-icons/fa';
+import { useDispatch } from '@/common/redux/store';
 
 const HomeNavbar = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const isAuthenticated = useSelector(selectIsAuthenticated);
 
   const handleBookNowClick = () => {
@@ -16,6 +19,10 @@ const HomeNavbar = () => {
     } else {
       // Navigate to the booking page or perform the booking action
     }
+  };
+
+  const handleLogout = () => {
+    dispatch(clearAuthentication());
   };
   return (
     <Navbar bg="light" expand="lg" className="py-3 w-50">
@@ -37,12 +44,23 @@ const HomeNavbar = () => {
             <Button variant="primary" className="me-2" onClick={handleBookNowClick}>
               Book now
             </Button>
-            <Button
-              variant="outline-secondary"
-              onClick={() => navigate(PATH_AUTHENTICATION.oauthLogin)}
-            >
-              Log in
-            </Button>
+            {!isAuthenticated ? (
+              <Button
+                variant="outline-secondary"
+                onClick={() => navigate(PATH_AUTHENTICATION.oauthLogin)}
+              >
+                Log in
+              </Button>
+            ) : (
+              <div className="auth d-flex align-items-center">
+                <FaUserCircle size={32} className="text-secondary" />
+                <ul className="select">
+                  <li onClick={handleLogout} className="item">
+                    Log out
+                  </li>
+                </ul>
+              </div>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>

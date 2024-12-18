@@ -28,6 +28,8 @@ const oauthSlice = createSlice({
     clearAuthentication: (state) => {
       state.isAuthenticated = false;
       state.user = null;
+      state.accessToken = null;
+      state.refreshToken = null;
     },
   },
 });
