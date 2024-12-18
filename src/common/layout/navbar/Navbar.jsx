@@ -33,7 +33,6 @@ const Nav = () => {
     { label: 'Treatment', route: PATH_DASHBOARD.treatment.common },
     { label: 'Appointments', route: PATH_DASHBOARD.appointment.calendar },
     { label: 'Patient', route: PATH_DASHBOARD.manage_patient.list },
-    { label: 'Prescription', route: PATH_DASHBOARD.prescription.list },
   ];
 
   return (
