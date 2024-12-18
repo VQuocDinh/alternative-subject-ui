@@ -317,12 +317,21 @@ const PrescriptionForm = () => {
               </Row>
 
               <Row className="mb-4">
-                <Col md={6}>
+                <Col md={4}>
                   <RHFTextField
                     name="duration"
                     label="Thời gian điều trị *"
                     type="number"
                     placeholder="Nhập số ngày"
+                  />
+                </Col>
+
+                <Col md={2}>
+                  <RHFTextField
+                    name="duration"
+                    label="Ngày bắt đầu "
+                    type="number"
+                    placeholder="Ngày bắt đầu"
                   />
                 </Col>
                 <Col md={6}>
