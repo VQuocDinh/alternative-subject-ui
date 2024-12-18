@@ -1,9 +1,28 @@
-import React from 'react';
+import { useDispatch } from '@/common/redux/store';
 import { Card } from 'react-bootstrap';
+import { setCurrentMedicalRecordStatus } from '../treatment.slice';
 
-const Widget = ({ title, value, icon, backgroundColor, textColor, iconColor }) => {
+const Widget = ({
+  title,
+  value,
+  icon,
+  backgroundColor,
+  textColor,
+  iconColor,
+  status,
+  isActive,
+  activeColor,
+}) => {
+  const dispatch = useDispatch();
+  const handleSelectStatus = () => {
+    dispatch(setCurrentMedicalRecordStatus(status));
+  };
   return (
-    <Card style={{ backgroundColor }} className="p-3 text-center h-100">
+    <Card
+      onClick={handleSelectStatus}
+      style={{ backgroundColor: isActive ? activeColor : backgroundColor, cursor: 'pointer' }}
+      className="p-3 text-center h-100"
+    >
       <div className="d-flex justify-content-between align-items-center">
         <div className="text-right">
           <h5 style={{ color: textColor }}>{title}</h5>

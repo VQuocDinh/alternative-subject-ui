@@ -58,6 +58,7 @@ const AppointmentCalendar = () => {
         borderColor: item.is_available ? 'rgb(25, 118, 210)' : 'red',
         textColor: '#FFFFFF',
       }));
+      console.log('events', events);
       setAvailabilityEvents(events);
     } catch (error) {
       console.error('Error fetching doctor availability:', error);

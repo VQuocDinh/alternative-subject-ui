@@ -28,6 +28,8 @@ const oauthSlice = createSlice({
     clearAuthentication: (state) => {
       state.isAuthenticated = false;
       state.user = null;
+      state.accessToken = null;
+      state.refreshToken = null;
     },
   },
 });
@@ -36,5 +38,6 @@ export const { setTokens, clearTokens, setAuthenticated, setUser, clearAuthentic
   oauthSlice.actions;
 
 export const selectIsAuthenticated = (state) => state.oauth.isAuthenticated;
+export const selectPatientId = (state) => state.oauth.user?.userId;
 
 export default oauthSlice.reducer;

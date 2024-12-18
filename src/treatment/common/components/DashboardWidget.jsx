@@ -11,6 +11,8 @@ import {
 } from 'react-icons/fa';
 import { axiosInstance } from '@/common/utils/axios';
 import { API_MEDICAL_RECORDS_STATUSES_COUNT } from '@/common/constant/common.constant';
+import { useSelector } from '@/common/redux/store';
+import { STATUSES_TREATMENT } from '../constant';
 
 const DashboardWidgets = () => {
   const [data, setData] = useState({
@@ -45,53 +47,69 @@ const DashboardWidgets = () => {
   const widgets = [
     {
       title: 'Bệnh nhân đăng ký khám',
+      status: STATUSES_TREATMENT[0].status,
       value: data.registeredPatients,
       icon: <FaUserPlus />,
       backgroundColor: '#E8F5E9',
       textColor: '#2E7D32',
       iconColor: '#66BB6A',
+      activeColor: '#A5D6A7',
     },
     {
       title: 'Y tá tiếp nhận bệnh nhân',
+      status: STATUSES_TREATMENT[1].status,
       value: data.nursesHandling,
       icon: <FaUserNurse />,
       backgroundColor: '#FFF8E1',
       textColor: '#F9A825',
       iconColor: '#FFD54F',
+      activeColor: '#FFE082',
     },
     {
       title: 'Bác sĩ tiếp nhận bệnh nhân',
+      status: STATUSES_TREATMENT[2].status,
       value: data.doctorsHandling,
       icon: <FaUserMd />,
       backgroundColor: '#E3F2FD',
       textColor: '#1565C0',
       iconColor: '#42A5F5',
+      activeColor: '#90CAF9',
     },
     {
       title: 'Bệnh nhân chờ làm xét nghiệm',
+      status: STATUSES_TREATMENT[3].status,
       value: data.patientsWaitingForTests,
       icon: <FaVials />,
       backgroundColor: '#F3E5F5',
       textColor: '#6A1B9A',
       iconColor: '#AB47BC',
+      activeColor: '#CE93D8',
     },
     {
       title: 'Bệnh nhân làm thủ tục thanh toán',
+      status: STATUSES_TREATMENT[4].status,
       value: data.patientsBilling,
       icon: <FaFileInvoiceDollar />,
       backgroundColor: '#FFEBEE',
       textColor: '#C62828',
       iconColor: '#EF5350',
+      activeColor: '#EF9A9A',
     },
     {
       title: 'Bệnh nhân hoàn thành khám',
+      status: STATUSES_TREATMENT[5].status,
       value: data.completedPatients,
       icon: <FaCheck />,
       backgroundColor: '#E3F2FD',
       textColor: '#1565C0',
       iconColor: '#42A5F5',
+      activeColor: '#90CAF9',
     },
   ];
+
+  const currentMedicalRecordStatus = useSelector(
+    (state) => state.treatment?.currentMedicalRecordStatus
+  );
 
   return (
     <Row className="p-1">
@@ -104,6 +122,9 @@ const DashboardWidgets = () => {
             backgroundColor={widget.backgroundColor}
             textColor={widget.textColor}
             iconColor={widget.iconColor}
+            activeColor={widget.activeColor}
+            status={widget.status}
+            isActive={widget.status === currentMedicalRecordStatus}
           />
         </Col>
       ))}

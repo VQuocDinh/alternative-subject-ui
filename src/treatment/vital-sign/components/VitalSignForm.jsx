@@ -21,6 +21,7 @@ const validationSchema = yup.object().shape({
   respiratoryRate: yup.number().required('Nhịp thở là bắt buộc').typeError('Nhịp thở phải là số'),
   bloodPressure: yup.string().required('Huyết áp là bắt buộc'),
   temperature: yup.number().required('Nhiệt độ là bắt buộc').typeError('Nhiệt độ phải là số'),
+  note: yup.string(),
 });
 
 const calculateBMI = (weight, height) => {
