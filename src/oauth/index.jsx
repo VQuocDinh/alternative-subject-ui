@@ -36,13 +36,16 @@ const OAuthContainer = () => {
 
       if (code) {
         try {
-          const response = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/google/callback`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ code }),
-          });
+          const response = await fetch(
+            `${import.meta.env.VITE_BASE_URL}/api/oauth/google/callback`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ code }),
+            }
+          );
 
           const data = await response.json();
           dispatch(
