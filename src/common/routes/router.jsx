@@ -26,8 +26,11 @@ const withRoutes = (routes) => {
 const DoctorAvailability = lazy(() => import('../../appointment/da'));
 const AppointmentCalendar = lazy(() => import('../../appointment/calendar'));
 const AppoimentAdd = lazy(() => import('../../appointment/add'));
+
+// Auth
 const LoginSignUp = lazy(() => import('../../auth/LoginSignup'));
 const OAuthContainer = lazy(() => import('../../oauth')); // Lazy load OAuthContainer
+const LoginOAuth = lazy(() => import('../../oauth/component/Login')); // Lazy load LoginOAuth
 
 // Management patient
 const ListPatient = lazy(() => import('../../manage-patient/list'));
@@ -68,6 +71,7 @@ const routes = (isAuthenticated) => [
       },
       { path: PATH_AUTHENTICATION.register, element: <div>register</div> },
       { path: PATH_AUTHENTICATION.oauthLogin, element: <OAuthContainer /> }, // New route for OAuth login
+      { path: PATH_AUTHENTICATION.oauth, element: <LoginOAuth /> },
     ],
   },
 

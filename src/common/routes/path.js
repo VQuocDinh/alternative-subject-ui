@@ -14,6 +14,7 @@ export const PATH_AUTHENTICATION = {
   logout: path(ROOT_AUTH, '/logout'),
   register: path(ROOT_AUTH, '/register'),
   oauthLogin: path(ROOT_AUTH, '/oauth-login'), // New path for OAuth login
+  oauth: path(ROOT_AUTH, '/login/oauth'), // New path for OAuth login
 };
 
 export const PATH_DASHBOARD = {
