@@ -56,9 +56,9 @@ const PrescriptionForm = () => {
     route: Yup.string().required('Vui lòng chọn đường dùng'),
     timing: Yup.array().min(1, 'Vui lòng chọn it nhất 1 thời điểm dùng'),
     startDate: Yup.date()
-    .nullable() // Allow null value
-    .transform((curr, orig) => orig === '' ? null : curr) // Transform empty string to null
-    .min(new Date(), 'Ngày bắt đầu không được nhỏ hơn ngày hiện tại'),
+      .nullable() // Allow null value
+      .transform((curr, orig) => (orig === '' ? null : curr)) // Transform empty string to null
+      .min(new Date(), 'Ngày bắt đầu không được nhỏ hơn ngày hiện tại'),
     instructions: Yup.string(),
     notes: Yup.string(),
   });
@@ -74,7 +74,7 @@ const PrescriptionForm = () => {
       duration: '',
       route: '',
       timing: [],
-      startDate:'',
+      startDate: '',
       instructions: '',
       notes: '',
     },
@@ -332,11 +332,7 @@ const PrescriptionForm = () => {
                 </Col>
 
                 <Col md={2}>
-                  <RHFTextField
-                    name="startDate"
-                    type="date"
-                    placeholder="Ngày bắt đầu"
-                  />
+                  <RHFTextField name="startDate" type="date" placeholder="Ngày bắt đầu" />
                 </Col>
                 <Col md={6}>
                   <RHFSelect name="route" label="Đường dùng *" SelectProps={{ native: false }}>

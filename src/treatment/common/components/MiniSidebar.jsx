@@ -4,11 +4,13 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { PATH_DASHBOARD } from '../../../common/routes/path';
 import { replacePathParams } from '../../../common/utils/common.utils';
 import { useCallback, useMemo } from 'react';
+import { useSelector } from '@/common/redux/store';
 
 const MiniSidebar = () => {
   const params = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const role = useSelector((state) => state.auth.user.role);
 
   const buttons = useMemo(
     () => [
@@ -23,11 +25,6 @@ const MiniSidebar = () => {
         path: PATH_DASHBOARD.treatment.vitalSign,
         includes: 'vital-sign',
       },
-      // {
-      //   label: 'Triệu chứng & khám tổng quan',
-      //   path: PATH_DASHBOARD.treatment.diagnosis,
-      //   includes: 'diagnosis',
-      // },
       {
         label: 'Chẩn đoán bệnh',
         path: PATH_DASHBOARD.treatment.diagnosis,
@@ -38,13 +35,17 @@ const MiniSidebar = () => {
         path: PATH_DASHBOARD.treatment.prescription,
         includes: 'prescription',
       },
-      {
-        label: 'Kê đơn thuốc',
-        path: PATH_DASHBOARD.treatment.prescribe,
-        includes: 'prescribe',
-      },
+      ...(role !== 'nurse'
+        ? [
+            {
+              label: 'Kê đơn thuốc',
+              path: PATH_DASHBOARD.treatment.prescribe,
+              includes: 'prescribe',
+            },
+          ]
+        : []),
     ],
-    []
+    [role]
   );
 
   const handleNavigation = useCallback(

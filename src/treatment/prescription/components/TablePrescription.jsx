@@ -9,6 +9,7 @@ import { PATH_DASHBOARD } from '../../../common/routes/path';
 import Pagination from '../../../common/components/Pagination';
 import { axiosInstance } from '@/common/utils/axios';
 import { API_PRESCRIPTION_LIST } from '@/common/constant/common.constant';
+import { useSelector } from '@/common/redux/store';
 
 const TablePrescription = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -20,6 +21,7 @@ const TablePrescription = () => {
   const [prescriptions, setPrescriptions] = useState([]);
   const { patientId } = params;
   const [isLoading, setIsLoading] = useState(true);
+  const role = useSelector((state) => state.auth.user.role);
 
   useEffect(() => {
     const fetchPrescriptionsByPatient = async () => {
@@ -134,7 +136,7 @@ const TablePrescription = () => {
                 headerMapping={headerMapping}
                 header={header}
                 data={currentPresciption}
-                isActionButton={true}
+                isActionButton={!(role === 'nurse')}
                 className="table-hover"
                 onRowClick={handleRowClick}
                 buttonTitle="Thêm đơn thuốc mới"
