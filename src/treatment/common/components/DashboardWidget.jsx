@@ -30,7 +30,7 @@ const DashboardWidgets = () => {
         const response = await axiosInstance.get(API_MEDICAL_RECORDS_STATUSES_COUNT);
         const { metadata } = response.data;
         setData({
-          registeredPatients: metadata.registered || 0,
+          registeredPatients: metadata.created || 0,
           nursesHandling: metadata.nurse_received || 0,
           doctorsHandling: metadata.doctor_received || 0,
           patientsWaitingForTests: metadata.waiting_lab || 0,
