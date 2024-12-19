@@ -27,6 +27,7 @@ export const PATH_DASHBOARD = {
     list: path(ROOT_DASHBOARD, '/manage-patient/list'),
     add: path(ROOT_DASHBOARD, '/manage-patient/add'),
     edit: path(ROOT_DASHBOARD, '/manage-patient/edit/:id'),
+    newMedicalRecord: path(ROOT_DASHBOARD, '/manage-patient/add-medical-record/:patientId'),
   },
   patient_records: {
     root: path(ROOT_DASHBOARD, '/patient-records'),

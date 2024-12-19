@@ -58,6 +58,19 @@ const ListPatientTableRow = ({ patient, onDeleteRow, onEditRow }) => {
                   <Iconify icon={'eva:edit-fill'} />
                   Chỉnh sửa
                 </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    navigate(
+                      replacePathParams(PATH_DASHBOARD.manage_patient.newMedicalRecord, {
+                        patientId: patient?.id || 0,
+                      })
+                    );
+                    handleCloseMenu();
+                  }}
+                >
+                  <Iconify icon={'eva:plus-circle-outline'} />
+                  Tạo hồ sơ y tế
+                </MenuItem>
               </Box>
             }
           ></TableMoreMenu>
